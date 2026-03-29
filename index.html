@@ -167,7 +167,7 @@
   <div class="cart-footer">
     <div class="cart-totals">
       <div class="cart-totals-row"><span>Items</span><span id="total-items">0</span></div>
-      <div class="cart-totals-row total"><span>Total</span><span id="total-price">INR 0</span></div>
+      <div class="cart-totals-row total"><span>Total</span><span id="total-price">₹0</span></div>
     </div>
     <div class="checkout-section" id="checkout-section">
       <div class="checkout-toggle" onclick="toggleCheckout()">
@@ -334,7 +334,7 @@ function placeOrder() {
     ? 'Free delivery (order above Rs.1000, within 10 km)'
     : 'Delivery charge: Rs.50-100 (based on distance)';
 
-  const msg = 'New Order Request\n-----------------\nName: ' + name + '\nPhone: ' + phone + '\nAddress: ' + address + '\n\nOrdered Items:\n' + itemLines + '\n\nTotal Amount: Rs.' + total.toLocaleString('en-IN') + '\n\nDelivery Info:\n' + deliveryNote + '\n\n_Sent via QuickMart_';
+  const msg = 'New Order Request\n-----------------\nName: ' + name + '\nPhone: ' + phone + '\nAddress: ' + address + '\n\nOrdered Items:\n' + itemLines + '\n\nTotal Amount: Rs.' + total.toLocaleString('en-IN') + '\n\nDelivery Info:\n' + deliveryNote + '\n\n_Sent via https://knightdevelopment.space/_';
   window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
