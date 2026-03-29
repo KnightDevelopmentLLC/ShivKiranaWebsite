@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickMart – Fresh & Fast</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:#f5f4f0; --surface:#fff; --ink:#1a1a1a; --muted:#6b6b6b;
+    --border:#e4e2dc; --accent:#1db954; --accent-dk:#17a349;
+    --accent-bg:#e8f9ee; --danger:#e53935; --wa:#25d366;
+    --shadow-sm:0 2px 8px rgba(0,0,0,.07);
+    --shadow-md:0 8px 32px rgba(0,0,0,.11);
+    --shadow-lg:0 20px 60px rgba(0,0,0,.14);
+    --r:14px; --r-sm:8px; --nav-h:68px;
+    --font-head:'Syne',sans-serif; --font-body:'DM Sans',sans-serif;
+    --transition:.22s cubic-bezier(.4,0,.2,1);
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
+
+  nav{position:sticky;top:0;z-index:100;height:var(--nav-h);background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 clamp(16px,5vw,48px);gap:16px}
+  .nav-brand{font-family:var(--font-head);font-size:1.35rem;font-weight:800;letter-spacing:-.5px;color:var(--ink);text-decoration:none;flex:1}
+  .nav-brand span{color:var(--accent)}
+  .nav-cart-btn{position:relative;background:var(--ink);color:#fff;border:none;border-radius:50px;padding:10px 20px;font-family:var(--font-body);font-size:.88rem;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background var(--transition),transform var(--transition);white-space:nowrap}
+  .nav-cart-btn:hover{background:#333;transform:translateY(-1px)}
+  .nav-cart-btn svg{width:18px;height:18px}
+  .cart-badge{background:var(--accent);color:#fff;font-size:.7rem;font-weight:700;min-width:20px;height:20px;border-radius:50px;display:flex;align-items:center;justify-content:center;padding:0 5px;transition:transform .2s}
+  .cart-badge.bump{animation:bump .3s ease}
+  @keyframes bump{0%,100%{transform:scale(1)}50%{transform:scale(1.45)}}
+
+  .hero{background:linear-gradient(135deg,#0f3d2c 0%,#1a6b44 60%,#22a05a 100%);color:#fff;padding:clamp(40px,8vw,80px) clamp(16px,5vw,48px);display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+  .hero-text{flex:1;min-width:240px}
+  .hero-eyebrow{font-size:.8rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;opacity:.75;margin-bottom:10px}
+  .hero h1{font-family:var(--font-head);font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.1;margin-bottom:14px}
+  .hero p{font-size:.95rem;opacity:.82;max-width:420px;line-height:1.6}
+  .hero-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:50px;padding:12px 24px;font-size:.85rem;backdrop-filter:blur(6px);white-space:nowrap}
+  .hero-badge b{font-family:var(--font-head);font-size:1.2rem;display:block}
+
+  .section{padding:clamp(32px,6vw,64px) clamp(16px,5vw,48px)}
+  .section-title{font-family:var(--font-head);font-size:clamp(1.4rem,3vw,1.9rem);font-weight:800;margin-bottom:8px}
+  .section-sub{color:var(--muted);font-size:.9rem;margin-bottom:28px}
+
+  .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
+  .product-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:transform var(--transition),box-shadow var(--transition)}
+  .product-card:hover{transform:translateY(-5px) scale(1.012);box-shadow:var(--shadow-lg)}
+  .product-img-wrap{overflow:hidden;aspect-ratio:1;background:#f0eeea}
+  .product-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s ease}
+  .product-card:hover .product-img-wrap img{transform:scale(1.08)}
+  .product-info{padding:14px 14px 16px}
+  .product-tag{font-size:.7rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+  .product-name{font-family:var(--font-head);font-size:1rem;font-weight:700;line-height:1.3;margin-bottom:6px}
+  .product-desc{font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.4}
+  .product-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .product-price{font-family:var(--font-head);font-size:1.15rem;font-weight:800}
+  .product-price span{font-size:.8rem;font-weight:400;color:var(--muted)}
+  .add-btn{background:var(--ink);color:#fff;border:none;border-radius:50px;padding:8px 16px;font-family:var(--font-body);font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background var(--transition),transform var(--transition);white-space:nowrap}
+  .add-btn:hover{background:var(--accent);transform:scale(1.04)}
+  .add-btn.in-cart{background:var(--accent-bg);color:var(--accent-dk)}
+  .add-btn.in-cart:hover{background:var(--accent);color:#fff}
+
+  .cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;opacity:0;pointer-events:none;transition:opacity var(--transition)}
+  .cart-overlay.open{opacity:1;pointer-events:all}
+  .cart-drawer{position:fixed;top:0;right:0;width:min(420px,100vw);height:100vh;background:var(--surface);z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow-lg)}
+  .cart-drawer.open{transform:translateX(0)}
+  .cart-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+  .cart-header h2{font-family:var(--font-head);font-size:1.2rem;font-weight:800}
+  .close-btn{background:var(--bg);border:1px solid var(--border);border-radius:50%;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background var(--transition);font-size:1.1rem;color:var(--ink)}
+  .close-btn:hover{background:var(--border)}
+  .cart-items{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .cart-items::-webkit-scrollbar{width:4px}
+  .cart-items::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+  .cart-empty{text-align:center;padding:48px 24px;color:var(--muted)}
+  .cart-empty svg{width:56px;height:56px;margin-bottom:12px;opacity:.3}
+  .cart-empty p{font-size:.9rem}
+  .cart-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;display:flex;gap:12px;align-items:center;animation:fadeSlide .25s ease}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  .cart-item-img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0}
+  .cart-item-info{flex:1;min-width:0}
+  .cart-item-name{font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+  .cart-item-price{font-size:.8rem;color:var(--muted)}
+  .qty-controls{display:flex;align-items:center;gap:6px;margin-top:6px}
+  .qty-btn{background:var(--surface);border:1px solid var(--border);border-radius:6px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:var(--ink);transition:background var(--transition),border-color var(--transition);flex-shrink:0}
+  .qty-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+  .qty-display{font-weight:700;font-size:.9rem;min-width:22px;text-align:center}
+  .remove-btn{background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;border-radius:6px;transition:color var(--transition),background var(--transition);flex-shrink:0;display:flex;align-items:center}
+  .remove-btn:hover{color:var(--danger);background:#ffeaea}
+  .remove-btn svg{width:16px;height:16px}
+
+  .cart-footer{padding:16px 20px;border-top:1px solid var(--border);background:var(--surface)}
+  .cart-totals{background:var(--bg);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:14px}
+  .cart-totals-row{display:flex;justify-content:space-between;font-size:.88rem;padding:3px 0}
+  .cart-totals-row.total{font-family:var(--font-head);font-size:1.05rem;font-weight:800;border-top:1px solid var(--border);margin-top:6px;padding-top:8px}
+
+  .checkout-section{background:var(--surface);border-top:1px solid var(--border)}
+  .checkout-toggle{padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:.92rem;user-select:none}
+  .checkout-toggle svg{width:18px;height:18px;transition:transform var(--transition)}
+  .checkout-section.open .checkout-toggle svg{transform:rotate(180deg)}
+  .checkout-body{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0 20px}
+  .checkout-section.open .checkout-body{max-height:400px;padding:0 20px 16px}
+  .form-field{margin-bottom:12px}
+  .form-field label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+  .form-field input,.form-field textarea{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;font-family:var(--font-body);font-size:.88rem;color:var(--ink);outline:none;transition:border-color var(--transition);resize:none}
+  .form-field input:focus,.form-field textarea:focus{border-color:var(--accent)}
+  .form-field input.error,.form-field textarea.error{border-color:var(--danger)}
+
+  .wa-btn{width:100%;background:var(--wa);color:#fff;border:none;border-radius:50px;padding:14px 20px;font-family:var(--font-head);font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background var(--transition),transform var(--transition),opacity var(--transition);letter-spacing:.2px;margin-top:4px}
+  .wa-btn:hover:not(:disabled){background:#1ebe5d;transform:translateY(-1px)}
+  .wa-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+  .wa-btn svg{width:20px;height:20px}
+
+  #toast-container{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;width:max-content;max-width:90vw}
+  .toast{background:var(--ink);color:#fff;padding:11px 20px;border-radius:50px;font-size:.85rem;font-weight:500;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-md);animation:toastIn .3s ease forwards}
+  .toast.out{animation:toastOut .3s ease forwards}
+  @keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.92)}to{opacity:1;transform:none}}
+  @keyframes toastOut{from{opacity:1}to{opacity:0;transform:translateY(8px)}}
+
+  footer{text-align:center;padding:32px 24px;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border)}
+
+  @media(max-width:500px){
+    .product-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+    .product-info{padding:10px 10px 12px}
+    .product-name{font-size:.9rem}
+    .add-btn{padding:7px 12px;font-size:.78rem}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-brand">Quick<span>Mart</span></a>
+  <button class="nav-cart-btn" onclick="toggleCart()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    Cart
+    <span class="cart-badge" id="cart-badge">0</span>
+  </button>
+</nav>
+
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Fresh · Fast · Local</div>
+    <h1>Your Neighbourhood<br>Shop, Online.</h1>
+    <p>Order groceries, snacks, and daily essentials — delivered to your door with a single WhatsApp message.</p>
+  </div>
+  <div class="hero-badge">
+    <b>🛵 Same Day</b>
+    Delivery Available
+  </div>
+</section>
+
+<section class="section" id="products">
+  <h2 class="section-title">Our Products</h2>
+  <p class="section-sub">Tap a card to add items to your cart — it's that easy.</p>
+  <div class="product-grid" id="product-grid"></div>
+</section>
+
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+
+<aside class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <h2>🛒 Your Cart</h2>
+    <button class="close-btn" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-totals">
+      <div class="cart-totals-row"><span>Items</span><span id="total-items">0</span></div>
+      <div class="cart-totals-row total"><span>Total</span><span id="total-price">₹0</span></div>
+    </div>
+    <div class="checkout-section" id="checkout-section">
+      <div class="checkout-toggle" onclick="toggleCheckout()">
+        <span>📋 Enter Delivery Details</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="checkout-body">
+        <div class="form-field">
+          <label>Full Name</label>
+          <input type="text" id="f-name" placeholder="e.g. Rahul Sharma">
+        </div>
+        <div class="form-field">
+          <label>Phone Number</label>
+          <input type="tel" id="f-phone" placeholder="e.g. 9876543210">
+        </div>
+        <div class="form-field">
+          <label>Delivery Address</label>
+          <textarea id="f-address" rows="2" placeholder="House No., Street, Area, City…"></textarea>
+        </div>
+      </div>
+    </div>
+    <button class="wa-btn" id="wa-btn" onclick="placeOrder()" disabled>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.114.55 4.1 1.508 5.83L0 24l6.336-1.48A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.655-.5-5.19-1.373l-.372-.22-3.762.878.929-3.667-.242-.381A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      Place Order via WhatsApp
+    </button>
+  </div>
+</aside>
+
+<footer>
+  <strong style="font-family:var(--font-head)">QuickMart</strong> · Powered by WhatsApp Ordering &nbsp;·&nbsp; © 2025
+</footer>
+
+<div id="toast-container"></div>
+
+<script>
+const WHATSAPP_NUMBER = '919876543210'; // ← Replace with your WhatsApp number
+
+const PRODUCTS = [
+  { id:1, name:'Basmati Rice 5kg',    tag:'Staples',    desc:'Premium long grain, aged 2 years',    price:380, img:'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&q=80' },
+  { id:2, name:'Sunflower Oil 1L',    tag:'Cooking',    desc:'Cold pressed, zero cholesterol',       price:155, img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80' },
+  { id:3, name:'Fresh Whole Milk 1L', tag:'Dairy',      desc:'Farm fresh, pasteurised daily',        price:62,  img:'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&q=80' },
+  { id:4, name:'Desi Eggs (12 pc)',   tag:'Protein',    desc:'Free-range, brown eggs',               price:95,  img:'https://images.unsplash.com/photo-1587486913049-53fc88980cfc?w=400&q=80' },
+  { id:5, name:'Tata Salt 1kg',       tag:'Staples',    desc:'Iodised crystal salt',                 price:28,  img:'https://images.unsplash.com/photo-1518110925495-5fe2fda0442c?w=400&q=80' },
+  { id:6, name:'Fresh Tomatoes 1kg',  tag:'Vegetables', desc:'Farm picked, vine fresh',              price:45,  img:'https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=400&q=80' },
+  { id:7, name:'Whole Wheat Bread',   tag:'Bakery',     desc:'Baked daily, no preservatives',        price:48,  img:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80' },
+  { id:8, name:'Amul Butter 500g',    tag:'Dairy',      desc:'Creamy, salted table butter',          price:235, img:'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400&q=80' }
+];
+
+let cart = [];
+
+function renderProducts() {
+  document.getElementById('product-grid').innerHTML = PRODUCTS.map(p => `
+    <div class="product-card">
+      <div class="product-img-wrap"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
+      <div class="product-info">
+        <div class="product-tag">${p.tag}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <div class="product-price">&#8377;${p.price} <span>/ unit</span></div>
+          <button class="add-btn" id="add-${p.id}" onclick="addToCart(${p.id})">+ Add</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addToCart(id) {
+  const product = PRODUCTS.find(p => p.id === id);
+  const existing = cart.find(c => c.id === id);
+  if (existing) existing.qty++;
+  else cart.push({ ...product, qty: 1 });
+  updateCartUI();
+  showToast('&#10004; ' + product.name + ' added to cart');
+  const btn = document.getElementById('add-' + id);
+  btn.classList.add('in-cart');
+  btn.textContent = '✓ Added';
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(c => c.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id);
+  else updateCartUI();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(c => c.id !== id);
+  updateCartUI();
+  const btn = document.getElementById('add-' + id);
+  if (btn) { btn.classList.remove('in-cart'); btn.textContent = '+ Add'; }
+}
+
+function updateCartUI() {
+  const totalQty = cart.reduce((s,c) => s + c.qty, 0);
+  const badge = document.getElementById('cart-badge');
+  badge.textContent = totalQty;
+  badge.classList.remove('bump');
+  void badge.offsetWidth;
+  badge.classList.add('bump');
+
+  const container = document.getElementById('cart-items');
+  if (cart.length === 0) {
+    container.innerHTML = '<div class="cart-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><p>Your cart is empty.<br>Add some products to get started!</p></div>';
+  } else {
+    container.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <img class="cart-item-img" src="${item.img}" alt="${item.name}">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">&#8377;${item.price} &times; ${item.qty} = <strong>&#8377;${item.price * item.qty}</strong></div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty(${item.id},-1)">&#8722;</button>
+            <span class="qty-display">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+          </div>
+        </div>
+        <button class="remove-btn" onclick="removeFromCart(${item.id})" title="Remove">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </div>`).join('');
+  }
+
+  const totalItems = cart.reduce((s,c) => s + c.qty, 0);
+  const totalPrice = cart.reduce((s,c) => s + c.qty * c.price, 0);
+  document.getElementById('total-items').textContent = totalItems;
+  document.getElementById('total-price').textContent = '&#8377;' + totalPrice.toLocaleString('en-IN');
+  document.getElementById('wa-btn').disabled = cart.length === 0;
+}
+
+function toggleCart() {
+  const overlay = document.getElementById('cart-overlay');
+  const drawer = document.getElementById('cart-drawer');
+  const open = drawer.classList.toggle('open');
+  overlay.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+
+function toggleCheckout() {
+  document.getElementById('checkout-section').classList.toggle('open');
+}
+
+function validate() {
+  let ok = true;
+  ['f-name','f-phone','f-address'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+    else el.classList.remove('error');
+  });
+  return ok;
+}
+
+function placeOrder() {
+  const cs = document.getElementById('checkout-section');
+  if (!cs.classList.contains('open')) { cs.classList.add('open'); return; }
+  if (!validate()) { showToast('&#9888;&#65039; Please fill all delivery details'); return; }
+
+  const name    = document.getElementById('f-name').value.trim();
+  const phone   = document.getElementById('f-phone').value.trim();
+  const address = document.getElementById('f-address').value.trim();
+  const total   = cart.reduce((s,c) => s + c.qty * c.price, 0);
+  const itemLines = cart.map((c,i) => (i+1) + '. ' + c.name + ' x' + c.qty + ' - Rs.' + (c.qty * c.price).toLocaleString('en-IN')).join('\n');
+  const deliveryNote = total >= 1000
+    ? 'Free delivery (order above Rs.1000, within 10 km)'
+    : 'Delivery charge: Rs.50-100 (based on distance)';
+
+  const msg = 'New Order Request\n-----------------\nName: ' + name + '\nPhone: ' + phone + '\nAddress: ' + address + '\n\nOrdered Items:\n' + itemLines + '\n\nTotal Amount: Rs.' + total.toLocaleString('en-IN') + '\n\nDelivery Info:\n' + deliveryNote + '\n\n_Sent via QuickMart_';
+  window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function showToast(msg) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 320); }, 2500);
+}
+
+renderProducts();
+updateCartUI();
+['f-name','f-phone','f-address'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function(){ if(this.value.trim()) this.classList.remove('error'); });
+});
+</script>
+</body>
+</html>
