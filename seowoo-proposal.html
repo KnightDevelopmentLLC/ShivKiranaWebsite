@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>For Seowoo 🌸</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@200;300;400&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+/* ─────────────────────────────────────────
+   RESET & VARIABLES
+───────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:        #07000f;
+  --bg2:       #0d0118;
+  --pink:      #f0a0c0;
+  --rose:      #e0608a;
+  --blush:     #fad4e4;
+  --lavender:  #c8a0e8;
+  --violet:    #9060c8;
+  --mist:      rgba(240,220,240,0.06);
+  --glow-p:    rgba(240,160,192,0.35);
+  --glow-v:    rgba(200,160,232,0.25);
+  --text:      #f5e8f2;
+  --text-dim:  rgba(245,232,242,0.45);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Jost', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ─────────────────────────────────────────
+   CURSOR
+───────────────────────────────────────── */
+#cur-dot {
+  position: fixed; z-index: 9999; pointer-events: none;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--pink);
+  transform: translate(-50%,-50%);
+  box-shadow: 0 0 12px var(--glow-p), 0 0 24px var(--glow-p);
+  transition: width .2s, height .2s, background .2s;
+}
+#cur-ring {
+  position: fixed; z-index: 9998; pointer-events: none;
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid rgba(240,160,192,0.3);
+  transform: translate(-50%,-50%);
+  transition: width .35s, height .35s;
+}
+body:has(button:hover) #cur-dot { width: 18px; height: 18px; background: var(--lavender); }
+body:has(button:hover) #cur-ring { width: 52px; height: 52px; }
+
+/* ─────────────────────────────────────────
+   PETAL CANVAS (fixed overlay)
+───────────────────────────────────────── */
+#petal-cv {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 3;
+}
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+#hero {
+  position: relative;
+  height: 100vh; min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 0;
+  overflow: hidden;
+}
+
+#three-cv {
+  position: absolute; inset: 0; z-index: 1;
+}
+
+/* Heart occupies top ~60% of hero */
+.hero-3d-zone {
+  position: relative; z-index: 5;
+  width: 100%; flex: 0 0 58vh;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+
+/* Text is pinned below the 3D zone */
+.hero-text-zone {
+  position: relative; z-index: 6;
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding-bottom: 2rem;
+}
+
+.hero-name {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(3.2rem, 10vw, 7.5rem);
+  background: linear-gradient(135deg, #fde8f0 0%, var(--pink) 40%, var(--lavender) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 28px rgba(240,160,192,.55));
+  animation: floatY 5s ease-in-out infinite;
+  line-height: 1.1;
+}
+
+.hero-sub {
+  font-family: 'Jost', sans-serif;
+  font-weight: 200;
+  font-size: clamp(.7rem, 2.2vw, 1rem);
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: .9rem;
+  animation: floatY 5s ease-in-out infinite .4s;
+}
+
+.scroll-cue {
+  position: absolute; bottom: 2rem; left: 50%;
+  transform: translateX(-50%); z-index: 6;
+  display: flex; flex-direction: column; align-items: center; gap: .4rem;
+  opacity: 0; animation: fadeIn 1s 2.4s forwards;
+}
+.scroll-cue span {
+  font-family: 'Jost', sans-serif; font-size: .58rem;
+  letter-spacing: .3em; text-transform: uppercase; color: var(--pink); opacity: .5;
+}
+.scroll-tick {
+  width: 1px; height: 36px;
+  background: linear-gradient(to bottom, var(--pink), transparent);
+  animation: tickPulse 2s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────
+   SHARED SECTION STYLES
+───────────────────────────────────────── */
+.sec {
+  position: relative;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 5rem 2rem;
+  overflow: hidden;
+}
+
+/* ambient orbs */
+.orb {
+  position: absolute; border-radius: 50%;
+  pointer-events: none; filter: blur(70px);
+  animation: orbDrift 14s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────
+   SECTION 2 — PROPOSAL MSG
+───────────────────────────────────────── */
+#s2 { background: linear-gradient(180deg, var(--bg) 0%, #0c0120 50%, var(--bg) 100%); }
+
+.s2-inner {
+  position: relative; z-index: 5;
+  text-align: center; max-width: 680px;
+}
+
+.eyebrow {
+  font-family: 'Jost', sans-serif; font-weight: 300;
+  font-size: .6rem; letter-spacing: .45em; text-transform: uppercase;
+  color: var(--rose); opacity: .7; margin-bottom: 2rem;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .9s ease, transform .9s ease;
+}
+.eyebrow.vis { opacity: .7; transform: translateY(0); }
+
+.quote-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(1.6rem, 4.5vw, 3rem);
+  line-height: 1.55;
+  color: #f8eef6;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 1.1s .2s ease, transform 1.1s .2s ease;
+}
+.quote-text.vis { opacity: 1; transform: translateY(0); }
+
+.quote-line { display: block; }
+.quote-line:nth-child(2) { color: var(--lavender); font-size: .9em; }
+
+/* decorative rule */
+.deco-rule {
+  display: flex; align-items: center; gap: 1rem;
+  margin: 2.4rem auto 0; width: fit-content;
+  opacity: 0; transition: opacity 1s .7s ease;
+}
+.deco-rule.vis { opacity: 1; }
+.deco-rule::before, .deco-rule::after {
+  content: ''; display: block; width: 60px; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(240,160,192,.4));
+}
+.deco-rule::after { background: linear-gradient(to left, transparent, rgba(240,160,192,.4)); }
+.deco-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 8px var(--glow-p); }
+
+/* ─────────────────────────────────────────
+   SECTION 3 — INTERACTION
+───────────────────────────────────────── */
+#s3 { background: linear-gradient(180deg, var(--bg) 0%, #0f0125 50%, var(--bg) 100%); }
+
+.s3-inner {
+  position: relative; z-index: 5;
+  text-align: center; max-width: 600px;
+  display: flex; flex-direction: column; align-items: center; gap: 3rem;
+}
+
+/* glass card */
+.glass-card {
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(240,160,192,0.12);
+  border-radius: 20px;
+  padding: 2.8rem 3rem;
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 0 60px rgba(240,160,192,0.05), inset 0 1px 0 rgba(255,255,255,0.07);
+  width: 100%;
+  transition: transform .15s ease, box-shadow .3s ease;
+}
+.glass-card:hover {
+  box-shadow: 0 0 80px rgba(240,160,192,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.card-label {
+  font-size: .58rem; letter-spacing: .4em; text-transform: uppercase;
+  color: var(--rose); opacity: .65; margin-bottom: 1.4rem;
+}
+
+/* open message button */
+.open-btn {
+  background: transparent;
+  border: 1px solid rgba(240,160,192,.28);
+  color: var(--pink);
+  font-family: 'Jost', sans-serif; font-weight: 300;
+  font-size: .72rem; letter-spacing: .4em; text-transform: uppercase;
+  padding: 1rem 2.8rem; border-radius: 100px;
+  cursor: none; position: relative; overflow: hidden;
+  transition: border-color .4s, box-shadow .4s, transform .2s;
+}
+.open-btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(240,160,192,.1), rgba(200,160,232,.1));
+  opacity: 0; transition: opacity .4s;
+}
+.open-btn:hover { border-color: rgba(240,160,192,.65); box-shadow: 0 0 32px rgba(240,160,192,.18); }
+.open-btn:hover::after { opacity: 1; }
+.open-btn:active { transform: scale(.97); }
+
+/* revealed message */
+.reveal-wrap {
+  max-height: 0; overflow: hidden; opacity: 0;
+  transform: translateY(14px);
+  transition: max-height .9s ease, opacity .9s ease, transform .9s ease;
+  text-align: center;
+}
+.reveal-wrap.open {
+  max-height: 140px; opacity: 1; transform: translateY(0);
+}
+.reveal-msg {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(1.15rem, 3.5vw, 1.9rem);
+  background: linear-gradient(135deg, var(--blush), var(--pink) 50%, var(--lavender));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 18px rgba(240,160,192,.35));
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────
+   SECTION 4 — SOFT PROPOSAL
+───────────────────────────────────────── */
+#s4 { background: linear-gradient(180deg, var(--bg) 0%, #0b0118 50%, var(--bg) 100%); }
+
+.s4-inner {
+  position: relative; z-index: 5;
+  text-align: center; max-width: 640px;
+}
+
+.s4-pre {
+  font-size: .6rem; letter-spacing: .42em; text-transform: uppercase;
+  color: var(--lavender); opacity: .5; margin-bottom: 2rem;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity .9s, transform .9s;
+}
+.s4-pre.vis { opacity: .5; transform: translateY(0); }
+
+.s4-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.5rem, 4vw, 2.6rem);
+  line-height: 1.6; color: #f5eaf4;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 1s .25s, transform 1s .25s;
+}
+.s4-text.vis { opacity: 1; transform: translateY(0); }
+.s4-text em { color: var(--lavender); font-style: italic; }
+
+.s4-note {
+  font-size: clamp(.78rem, 2vw, .95rem); font-weight: 200;
+  letter-spacing: .08em; color: var(--text-dim); margin-top: 1.6rem;
+  opacity: 0; transition: opacity 1s .5s;
+}
+.s4-note.vis { opacity: 1; }
+
+/* ─────────────────────────────────────────
+   SECTION 5 — END
+───────────────────────────────────────── */
+#s5 {
+  background: linear-gradient(180deg, var(--bg) 0%, #08000e 100%);
+  min-height: 70vh;
+}
+
+.s5-inner {
+  position: relative; z-index: 5;
+  text-align: center;
+}
+
+.end-main {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(2.8rem, 9vw, 6.5rem);
+  background: linear-gradient(135deg, #fde8f0, var(--pink) 50%, var(--lavender));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 24px rgba(240,160,192,.4));
+  animation: floatY 6s ease-in-out infinite;
+}
+.end-sub {
+  font-family: 'Jost', sans-serif; font-weight: 200;
+  font-size: clamp(.6rem, 1.8vw, .82rem);
+  letter-spacing: .38em; text-transform: uppercase;
+  color: rgba(245,232,242,.28); margin-top: 1.4rem;
+  animation: floatY 6s ease-in-out infinite .5s;
+}
+
+/* ─────────────────────────────────────────
+   KEYFRAMES
+───────────────────────────────────────── */
+@keyframes floatY {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+@keyframes tickPulse {
+  0%,100% { opacity: .35; transform: scaleY(1); }
+  50%      { opacity: .75; transform: scaleY(1.25); }
+}
+@keyframes orbDrift {
+  0%,100% { transform: translateY(0) scale(1); }
+  40%      { transform: translateY(-18px) scale(1.04); }
+  70%      { transform: translateY(10px) scale(.97); }
+}
+
+/* ─────────────────────────────────────────
+   SCROLLBAR
+───────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--rose); border-radius: 2px; }
+
+/* ─────────────────────────────────────────
+   MOBILE
+───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .glass-card { padding: 2rem 1.4rem; }
+  .hero-3d-zone { flex: 0 0 52vh; }
+  #cur-dot, #cur-ring { display: none; }
+  body { cursor: auto; }
+  button { cursor: pointer !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- Petal canvas (fixed, full screen) -->
+<canvas id="petal-cv"></canvas>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section id="hero">
+  <canvas id="three-cv"></canvas>
+
+  <!-- 3D occupies top portion of hero (transparent spacer) -->
+  <div class="hero-3d-zone"></div>
+
+  <!-- Text anchored below the 3D heart -->
+  <div class="hero-text-zone">
+    <h1 class="hero-name">Seowoo 🌸</h1>
+    <p class="hero-sub">I made something special for you</p>
+  </div>
+
+  <div class="scroll-cue">
+    <span>Scroll</span>
+    <div class="scroll-tick"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SECTION 2 — PROPOSAL MESSAGE
+══════════════════════════════════════ -->
+<section id="s2" class="sec">
+  <div class="orb" style="width:320px;height:320px;background:rgba(200,160,232,.1);top:10%;left:-5%;animation-delay:0s;"></div>
+  <div class="orb" style="width:400px;height:400px;background:rgba(240,160,192,.07);bottom:5%;right:-8%;animation-delay:5s;"></div>
+
+  <div class="s2-inner" data-reveal="s2">
+    <p class="eyebrow">a quiet thought</p>
+    <blockquote class="quote-text">
+      <span class="quote-line">"I don't know where this will go,</span>
+      <span class="quote-line">but I know I'd like to know you better."</span>
+    </blockquote>
+    <div class="deco-rule"><div class="deco-dot"></div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SECTION 3 — INTERACTION
+══════════════════════════════════════ -->
+<section id="s3" class="sec">
+  <div class="orb" style="width:360px;height:360px;background:rgba(144,96,200,.1);top:20%;right:5%;animation-delay:3s;"></div>
+  <div class="orb" style="width:280px;height:280px;background:rgba(240,160,192,.08);bottom:10%;left:10%;animation-delay:7s;"></div>
+
+  <div class="s3-inner">
+    <div class="glass-card" id="tilt-card">
+      <p class="card-label">something I want to share</p>
+      <button class="open-btn" id="open-btn">Open Message</button>
+      <div class="reveal-wrap" id="reveal-wrap">
+        <br>
+        <p class="reveal-msg">"You feel different…&nbsp;in a good way 😊"</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SECTION 4 — SOFT PROPOSAL
+══════════════════════════════════════ -->
+<section id="s4" class="sec">
+  <div class="orb" style="width:500px;height:500px;background:rgba(192,128,240,.07);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+
+  <div class="s4-inner" data-reveal="s4">
+    <p class="s4-pre">with no pressure at all</p>
+    <p class="s4-text">
+      "If you're comfortable,<br>
+      <em>maybe we can talk sometime?</em>"
+    </p>
+    <p class="s4-note">No pressure. Just a gentle thought 🌷</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SECTION 5 — END
+══════════════════════════════════════ -->
+<section id="s5" class="sec">
+  <div class="orb" style="width:600px;height:600px;background:rgba(240,160,192,.05);top:50%;left:50%;transform:translate(-50%,-50%);filter:blur(90px);"></div>
+  <div class="s5-inner">
+    <p class="end-main">Have a beautiful day 🌸</p>
+    <p class="end-sub">made with care ✦</p>
+  </div>
+</section>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+/* ══════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════ */
+const isMobile = window.innerWidth < 768;
+const PI = Math.PI;
+const lerp = (a,b,t) => a + (b-a)*t;
+
+/* ══════════════════════════════════════════
+   CUSTOM CURSOR
+══════════════════════════════════════════ */
+const dot  = document.getElementById('cur-dot');
+const ring = document.getElementById('cur-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+(function cursorLoop(){
+  requestAnimationFrame(cursorLoop);
+  dot.style.cssText  += `;left:${mx}px;top:${my}px`;
+  rx = lerp(rx, mx, .13); ry = lerp(ry, my, .13);
+  ring.style.cssText += `;left:${rx}px;top:${ry}px`;
+})();
+
+/* ══════════════════════════════════════════
+   THREE.JS — HEART + PARTICLES
+══════════════════════════════════════════ */
+(function initThree(){
+  const cv = document.getElementById('three-cv');
+  const renderer = new THREE.WebGLRenderer({ canvas:cv, alpha:true, antialias:!isMobile });
+  renderer.setPixelRatio(isMobile ? 1 : Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
+
+  const scene = new THREE.Scene();
+  const cam   = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, .1, 200);
+  cam.position.set(0, 0, 5.5);
+
+  /* ── Heart shape ── */
+  const shape = new THREE.Shape();
+  shape.moveTo(0, .6);
+  shape.bezierCurveTo( .1, .9,  .6,  .9,  .6,  .5);
+  shape.bezierCurveTo( .6,  .2, .35, -.1,  0, -.5);
+  shape.bezierCurveTo(-.35, -.1,-.6,  .2, -.6,  .5);
+  shape.bezierCurveTo(-.6,  .9, -.1,  .9,  0,  .6);
+
+  const extCfg = {
+    depth: isMobile ? .22 : .32,
+    bevelEnabled: true,
+    bevelSize: .06, bevelThickness: .06,
+    bevelSegments: isMobile ? 4 : 12,
+    curveSegments: isMobile ? 12 : 28
+  };
+  const hGeo = new THREE.ExtrudeGeometry(shape, extCfg);
+  hGeo.center();
+
+  /* gradient-like material */
+  const hMat = new THREE.MeshStandardMaterial({
+    color:      new THREE.Color('#b84c80'),
+    emissive:   new THREE.Color('#6a1240'),
+    emissiveIntensity: .55,
+    metalness:  .25,
+    roughness:  .25,
+  });
+  const heart = new THREE.Mesh(hGeo, hMat);
+  heart.scale.setScalar(1.05);
+
+  /* Position heart in the TOP portion of the viewport */
+  /* We'll move it up so it sits in the hero-3d-zone */
+  heart.position.y = 0.4;
+  scene.add(heart);
+
+  /* Thin wireframe halo */
+  const wireMat = new THREE.MeshBasicMaterial({
+    color:0xf0a0c0, wireframe:true, transparent:true, opacity:.07
+  });
+  const wire = new THREE.Mesh(hGeo, wireMat);
+  wire.scale.setScalar(1.055);
+  wire.position.copy(heart.position);
+  scene.add(wire);
+
+  /* Glow rings */
+  function makeRing(r, tube, col, op){
+    const g = new THREE.TorusGeometry(r, tube, 8, 80);
+    const m = new THREE.MeshBasicMaterial({color:col, transparent:true, opacity:op});
+    return new THREE.Mesh(g, m);
+  }
+  const ring1 = makeRing(1.45, .007, 0xf0a0c0, .3);
+  const ring2 = makeRing(1.72, .004, 0xc8a0e8, .18);
+  ring1.position.copy(heart.position);
+  ring2.position.copy(heart.position);
+  scene.add(ring1); scene.add(ring2);
+
+  /* Particles */
+  const pCount = isMobile ? 500 : 1200;
+  const pPos = new Float32Array(pCount*3);
+  const pCol = new Float32Array(pCount*3);
+  const palette = [
+    new THREE.Color('#f0a0c0'),
+    new THREE.Color('#c8a0e8'),
+    new THREE.Color('#e0608a'),
+    new THREE.Color('#fad4e4'),
+  ];
+  for(let i=0;i<pCount;i++){
+    pPos[i*3]   = (Math.random()-.5)*20;
+    pPos[i*3+1] = (Math.random()-.5)*20;
+    pPos[i*3+2] = (Math.random()-.5)*20;
+    const c = palette[Math.floor(Math.random()*palette.length)];
+    pCol[i*3]=c.r; pCol[i*3+1]=c.g; pCol[i*3+2]=c.b;
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos,3));
+  pGeo.setAttribute('color',    new THREE.BufferAttribute(pCol,3));
+  const pMat = new THREE.PointsMaterial({size:.04, vertexColors:true, transparent:true, opacity:.65});
+  const pts = new THREE.Points(pGeo, pMat);
+  scene.add(pts);
+
+  /* Lighting */
+  scene.add(new THREE.AmbientLight(0xffd0e8, .5));
+  const pLight1 = new THREE.PointLight(0xf0a0c0, 5, 18);
+  pLight1.position.set(2.5, 2, 3);
+  const pLight2 = new THREE.PointLight(0xc8a0e8, 4, 14);
+  pLight2.position.set(-2, -1, 2.5);
+  const dirL = new THREE.DirectionalLight(0xffe0f0, .6);
+  dirL.position.set(0, 4, -2);
+  scene.add(pLight1, pLight2, dirL);
+
+  /* Mouse parallax */
+  let tRx=0, tRy=0;
+  document.addEventListener('mousemove', e => {
+    tRy = (e.clientX/innerWidth - .5) * .7;
+    tRx = (e.clientY/innerHeight - .5) * -.35;
+  });
+
+  /* Animation */
+  let t = 0;
+  (function loop(){
+    requestAnimationFrame(loop);
+    t += .007;
+
+    heart.rotation.y = lerp(heart.rotation.y, tRy, .04) + .003;
+    heart.rotation.x = lerp(heart.rotation.x, tRx, .04);
+    heart.position.y = 0.4 + Math.sin(t*.9) * .12;
+
+    wire.rotation.copy(heart.rotation);
+    wire.position.copy(heart.position);
+    ring1.position.copy(heart.position);
+    ring2.position.copy(heart.position);
+    ring1.rotation.x = t*.35; ring1.rotation.y = t*.55;
+    ring2.rotation.x = -t*.22; ring2.rotation.z = t*.4;
+
+    pts.rotation.y = t*.04;
+    pts.rotation.x = t*.018;
+
+    pLight1.position.x = Math.sin(t) * 3.5;
+    pLight1.position.y = Math.cos(t*.7) * 2.5 + .4;
+    pLight2.position.x = Math.cos(t*1.1) * 3;
+    pLight2.position.y = Math.sin(t*.8) * 2;
+
+    renderer.render(scene, cam);
+  })();
+
+  window.addEventListener('resize', ()=>{
+    cam.aspect = innerWidth/innerHeight;
+    cam.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  });
+})();
+
+/* ══════════════════════════════════════════
+   CHERRY BLOSSOM PETALS
+══════════════════════════════════════════ */
+(function initPetals(){
+  const cv  = document.getElementById('petal-cv');
+  const ctx = cv.getContext('2d');
+  const resize = () => { cv.width = innerWidth; cv.height = innerHeight; };
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COUNT = isMobile ? 18 : 36;
+  const COLORS = ['#f4b8d4','#e879a0','#fcd5e8','#d8a8e0','#f0ccdc'];
+
+  function mkPetal(){
+    return {
+      x:     Math.random() * innerWidth,
+      y:     -15 - Math.random()*60,
+      sz:    5 + Math.random()*7,
+      vy:    .55 + Math.random()*1.1,
+      vx:    -.35 + Math.random()*.7,
+      rot:   Math.random()*PI*2,
+      rSpd:  (Math.random()-.5)*.035,
+      wobble:Math.random()*PI*2,
+      wSpd:  .013 + Math.random()*.022,
+      op:    .38 + Math.random()*.5,
+      col:   COLORS[Math.floor(Math.random()*COLORS.length)]
+    };
+  }
+
+  let petals = Array.from({length:COUNT}, mkPetal);
+
+  function draw(p){
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = p.op;
+    ctx.fillStyle   = p.col;
+    ctx.shadowColor = p.col;
+    ctx.shadowBlur  = 7;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.sz, p.sz*.52, 0, 0, PI*2);
+    ctx.fill();
+    /* centre vein */
+    ctx.globalAlpha = p.op * .25;
+    ctx.strokeStyle = 'rgba(255,255,255,.8)';
+    ctx.lineWidth   = .5;
+    ctx.beginPath(); ctx.moveTo(0,-p.sz*.5); ctx.lineTo(0,p.sz*.5); ctx.stroke();
+    ctx.restore();
+  }
+
+  (function loop(){
+    requestAnimationFrame(loop);
+    ctx.clearRect(0,0,cv.width,cv.height);
+    petals.forEach(p=>{
+      p.y += p.vy;
+      p.wobble += p.wSpd;
+      p.x += p.vx + Math.sin(p.wobble)*.55;
+      p.rot += p.rSpd;
+      draw(p);
+      if(p.y > cv.height+20){ Object.assign(p, mkPetal()); p.y=-15; }
+    });
+  })();
+})();
+
+/* ══════════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════════ */
+const revealMap = {
+  s2: {
+    eyebrow:   ()=> document.querySelector('#s2 .eyebrow'),
+    quoteText: ()=> document.querySelector('#s2 .quote-text'),
+    decoRule:  ()=> document.querySelector('#s2 .deco-rule'),
+  },
+  s4: {
+    pre:  ()=> document.querySelector('#s4 .s4-pre'),
+    text: ()=> document.querySelector('#s4 .s4-text'),
+    note: ()=> document.querySelector('#s4 .s4-note'),
+  }
+};
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const id = e.target.dataset.reveal;
+    if(id === 's2'){
+      const m = revealMap.s2;
+      m.eyebrow().classList.add('vis');
+      m.quoteText().classList.add('vis');
+      m.decoRule().classList.add('vis');
+    }
+    if(id === 's4'){
+      const m = revealMap.s4;
+      m.pre().classList.add('vis');
+      m.text().classList.add('vis');
+      m.note().classList.add('vis');
+    }
+    io.unobserve(e.target);
+  });
+}, {threshold:.35});
+
+document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+/* ══════════════════════════════════════════
+   SECTION 3 — GLASS CARD TILT + REVEAL
+══════════════════════════════════════════ */
+const card = document.getElementById('tilt-card');
+document.addEventListener('mousemove', e=>{
+  if(isMobile) return;
+  const r = card.getBoundingClientRect();
+  if(!r) return;
+  const cx = r.left + r.width/2, cy = r.top + r.height/2;
+  const dx = (e.clientX - cx) / (innerWidth/2);
+  const dy = (e.clientY - cy) / (innerHeight/2);
+  card.style.transform = `perspective(900px) rotateY(${dx*8}deg) rotateX(${-dy*6}deg) translateZ(8px)`;
+});
+document.addEventListener('mouseleave', ()=>{
+  card.style.transform = '';
+});
+
+let revealed = false;
+document.getElementById('open-btn').addEventListener('click', ()=>{
+  if(revealed) return;
+  revealed = true;
+  document.getElementById('reveal-wrap').classList.add('open');
+  const btn = document.getElementById('open-btn');
+  btn.textContent = '✦';
+  btn.style.borderColor = 'rgba(200,160,232,.5)';
+  btn.style.color = 'var(--lavender)';
+  btn.style.letterSpacing = '.1em';
+});
+
+/* ══════════════════════════════════════════
+   PARALLAX DEPTH ON SCROLL
+══════════════════════════════════════════ */
+window.addEventListener('scroll', ()=>{
+  if(isMobile) return;
+  const sy = window.scrollY;
+  document.getElementById('three-cv').style.transform = `translateY(${sy*.25}px)`;
+  document.getElementById('petal-cv').style.transform  = `translateY(${sy*.08}px)`;
+}, {passive:true});
+</script>
+</body>
+</html>
