@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bazaar — Fresh from the Market</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛍️</text></svg>" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-brand" href="#">
+    <div class="nav-brand-icon">🛍️</div>
+    <span class="nav-brand-name">Bazaar</span>
+  </a>
+  <div class="nav-actions">
+    <button class="cart-btn" onclick="openCart()">
+      🛒 Cart <span class="cart-count" id="cart-count">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-eyebrow">✦ Fresh arrivals every day</div>
+      <h1 class="hero-title">Your Local <span>Bazaar</span>,<br/>Now Online</h1>
+      <p class="hero-desc">Discover fresh produce, handpicked items, and daily essentials — all delivered to your door. Real prices, real people.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-lg" onclick="document.querySelector('.products-section').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+        <button class="btn btn-ghost btn-lg" onclick="openCart()">View Cart</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card"><img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80" alt="Market" /></div>
+      <div class="hero-card"><img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=300&q=80" alt="Spices" /></div>
+      <div class="hero-card"><img src="https://images.unsplash.com/photo-1543168256-418811576931?w=300&q=80" alt="Groceries" /></div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH -->
+<section class="search-section">
+  <div class="search-wrap">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input class="input-field" id="search-input" type="text" placeholder="Search for products…" oninput="filterProducts()" />
+    </div>
+    <button class="btn btn-primary" onclick="filterProducts()">Search</button>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories-section">
+  <div class="inner">
+    <div class="section-title-row">
+      <h2 class="section-title">Shop by Category</h2>
+    </div>
+    <div class="tags-row" id="categories-filter">
+      <span class="tag active" onclick="setCategory('all', this)">All Products</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products-section">
+  <div class="inner">
+    <div id="products-container">
+      <div class="products-grid" id="skeleton-grid">
+        <div class="skeleton skel-card"></div>
+        <div class="skeleton skel-card"></div>
+        <div class="skeleton skel-card"></div>
+        <div class="skeleton skel-card"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CART OVERLAY + DRAWER -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="cart-drawer-header">
+    <h2 class="cart-drawer-title">Your Cart 🛒</h2>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items-list"></div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-total-row">
+      <span>Total</span>
+      <span class="cart-total-price" id="cart-total">₹0</span>
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem;padding:14px" onclick="openCheckout()">Proceed to Order via WhatsApp →</button>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkout-modal">
+  <div class="modal">
+    <h2 class="modal-title">Complete Your Order</h2>
+    <p class="modal-subtitle">We'll send your order details to WhatsApp for quick confirmation.</p>
+    <div class="form-group">
+      <label class="label">Your Name *</label>
+      <input class="input-field" id="order-name" type="text" placeholder="Enter your full name" />
+    </div>
+    <div class="form-group">
+      <label class="label">Phone Number *</label>
+      <input class="input-field" id="order-phone" type="tel" placeholder="+91 XXXXX XXXXX" />
+    </div>
+    <div class="form-group">
+      <label class="label">Delivery Address *</label>
+      <textarea class="input-field" id="order-address" rows="3" placeholder="House no, Street, City, Pincode…" style="resize:vertical"></textarea>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeCheckout()">Cancel</button>
+      <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="placeOrder()">Send via WhatsApp 💬</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<button class="chatbot-btn" id="chatbot-btn" onclick="toggleChatbot()" title="Chat with us">💬</button>
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-avatar">🤖</div>
+    <div class="chatbot-header-info">
+      <h4>Bazaar Assistant</h4>
+      <p>Always here to help</p>
+    </div>
+  </div>
+  <div class="chatbot-messages" id="chatbot-messages">
+    <div class="chat-msg bot">👋 Hi! I'm your Bazaar assistant. How can I help you today?</div>
+  </div>
+  <div class="chatbot-options" id="chatbot-options">
+    <button class="chat-option-btn" onclick="chatOption('products')">🛍️ View Products</button>
+    <button class="chat-option-btn" onclick="chatOption('order')">📦 Order Help</button>
+    <button class="chat-option-btn" onclick="chatOption('delivery')">🚚 Delivery Info</button>
+    <button class="chat-option-btn" onclick="chatOption('contact')">📞 Contact Us</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <h3>🛍️ Bazaar</h3>
+      <p>Your trusted local market, now at your fingertips. Fresh products, great prices, right at your doorstep.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="#">Home</a>
+      <a href="#" onclick="openCart()">Cart</a>
+      <a href="#" onclick="openChatbot()">Chat with Us</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <p>📍 Your City, India</p>
+      <p>📞 +91 XXXXXXXXXX</p>
+      <p>🕐 Mon–Sat, 9am–7pm</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Bazaar. Built with ❤️ for small businesses.</p>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // ⚠️ REPLACE WITH YOUR FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ---- STATE ----
+  let allProducts = [];
+  let cart = JSON.parse(localStorage.getItem('bazaar_cart') || '[]');
+  let activeCategory = 'all';
+  let searchQuery = '';
+
+  // ---- WHATSAPP NUMBER (change this!) ----
+  window.WA_NUMBER = '919999999999'; // e.g. 919876543210
+
+  // ---- FIRESTORE REAL-TIME LISTENER ----
+  const q = query(collection(db, 'products'), orderBy('name'));
+  onSnapshot(q, (snap) => {
+    allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    buildCategoryFilter();
+    renderProducts();
+  }, (err) => {
+    console.error('Firebase error:', err);
+    // Show demo mode if Firebase isn't configured
+    document.getElementById('products-container').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🔧</div>
+        <h3>Setup Required</h3>
+        <p>Please configure your Firebase credentials in index.html to load products.</p>
+      </div>`;
+  });
+
+  // ---- CATEGORY FILTER ----
+  function buildCategoryFilter() {
+    const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+    const container = document.getElementById('categories-filter');
+    container.innerHTML = `<span class="tag ${activeCategory==='all'?'active':''}" onclick="setCategory('all',this)">All Products</span>`;
+    cats.forEach(cat => {
+      const t = document.createElement('span');
+      t.className = `tag ${activeCategory===cat?'active':''}`;
+      t.textContent = cat;
+      t.setAttribute('onclick', `setCategory('${cat}',this)`);
+      container.appendChild(t);
+    });
+  }
+
+  // ---- RENDER PRODUCTS ----
+  function renderProducts() {
+    let filtered = allProducts;
+    if (activeCategory !== 'all') filtered = filtered.filter(p => p.category === activeCategory);
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(p => p.name?.toLowerCase().includes(q) || p.category?.toLowerCase().includes(q));
+    }
+
+    const container = document.getElementById('products-container');
+    if (!filtered.length) {
+      container.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><h3>No products found</h3><p>Try a different search or category.</p></div>`;
+      return;
+    }
+
+    if (activeCategory !== 'all') {
+      container.innerHTML = `
+        <div class="category-block">
+          <h2 class="category-label">${activeCategory}</h2>
+          <div class="products-grid">${filtered.map(productCard).join('')}</div>
+        </div>`;
+    } else {
+      // Group by category
+      const groups = {};
+      filtered.forEach(p => {
+        const cat = p.category || 'Uncategorized';
+        if (!groups[cat]) groups[cat] = [];
+        groups[cat].push(p);
+      });
+      container.innerHTML = Object.entries(groups).map(([cat, prods]) => `
+        <div class="category-block">
+          <h2 class="category-label">${cat}</h2>
+          <div class="products-grid">${prods.map(productCard).join('')}</div>
+        </div>`).join('');
+    }
+    updateCartUI();
+  }
+
+  function productCard(p) {
+    const inCart = cart.some(c => c.id === p.id);
+    const outOfStock = (p.quantity !== undefined && p.quantity <= 0);
+    return `
+      <div class="product-card">
+        <div class="product-card-img">
+          <img src="${p.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=70'}" 
+               alt="${p.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=70'" />
+          ${outOfStock ? '<div class="product-card-badge"><span class="badge" style="background:#fce4e4;color:#c0392b">Out of Stock</span></div>' : ''}
+        </div>
+        <div class="product-card-body">
+          <div class="product-card-name">${p.name}</div>
+          <div class="product-card-category">${p.category || ''}</div>
+          <div class="product-card-footer">
+            <div class="product-card-price"><span>₹</span>${Number(p.price).toLocaleString('en-IN')}</div>
+            ${outOfStock
+              ? '<button class="add-to-cart-btn out" disabled>Unavailable</button>'
+              : `<button class="add-to-cart-btn" onclick='addToCart(${JSON.stringify(p).replace(/'/g,"\\'")})'>${inCart ? '✓ Added' : '+ Cart'}</button>`
+            }
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ---- EXPOSE TO GLOBAL ----
+  window.setCategory = (cat, el) => {
+    activeCategory = cat;
+    document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    renderProducts();
+  };
+  window.filterProducts = () => {
+    searchQuery = document.getElementById('search-input').value;
+    renderProducts();
+  };
+
+  // ---- CART ----
+  window.addToCart = (product) => {
+    const existing = cart.find(c => c.id === product.id);
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ ...product, qty: 1 });
+    }
+    saveCart();
+    updateCartUI();
+    showToast(`${product.name} added to cart! 🛒`, 'success');
+    renderProducts(); // re-render to show "✓ Added"
+  };
+
+  window.removeFromCart = (id) => {
+    cart = cart.filter(c => c.id !== id);
+    saveCart(); updateCartUI(); renderCartItems(); renderProducts();
+  };
+
+  window.changeQty = (id, delta) => {
+    const item = cart.find(c => c.id === id);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+    saveCart(); updateCartUI(); renderCartItems(); renderProducts();
+  };
+
+  function saveCart() {
+    localStorage.setItem('bazaar_cart', JSON.stringify(cart));
+  }
+
+  function updateCartUI() {
+    const count = cart.reduce((s, c) => s + c.qty, 0);
+    document.getElementById('cart-count').textContent = count;
+  }
+
+  function renderCartItems() {
+    const list = document.getElementById('cart-items-list');
+    const footer = document.getElementById('cart-footer');
+    if (!cart.length) {
+      list.innerHTML = `<div class="cart-empty-msg"><div class="icon">🛒</div><p>Your cart is empty</p></div>`;
+      footer.style.display = 'none';
+      return;
+    }
+    footer.style.display = 'block';
+    const total = cart.reduce((s, c) => s + (c.price * c.qty), 0);
+    document.getElementById('cart-total').textContent = '₹' + total.toLocaleString('en-IN');
+    list.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <img class="cart-item-img" src="${item.image || ''}" alt="${item.name}" onerror="this.style.background='var(--sand)';this.style.display='block'" />
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">₹${Number(item.price).toLocaleString('en-IN')}</div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+          </div>
+        </div>
+        <button class="cart-remove" onclick="removeFromCart('${item.id}')" title="Remove">🗑️</button>
+      </div>`).join('');
+  }
+
+  // ---- CART DRAWER ----
+  window.openCart = () => {
+    renderCartItems();
+    document.getElementById('cart-drawer').classList.add('open');
+    document.getElementById('cart-overlay').classList.add('open');
+  };
+  window.closeCart = () => {
+    document.getElementById('cart-drawer').classList.remove('open');
+    document.getElementById('cart-overlay').classList.remove('open');
+  };
+
+  // ---- CHECKOUT ----
+  window.openCheckout = () => {
+    if (!cart.length) return;
+    document.getElementById('checkout-modal').classList.add('open');
+  };
+  window.closeCheckout = () => {
+    document.getElementById('checkout-modal').classList.remove('open');
+  };
+  window.placeOrder = () => {
+    const name = document.getElementById('order-name').value.trim();
+    const phone = document.getElementById('order-phone').value.trim();
+    const address = document.getElementById('order-address').value.trim();
+    if (!name || !phone || !address) { showToast('Please fill all fields', 'error'); return; }
+    const items = cart.map(c => `• ${c.name} × ${c.qty} = ₹${(c.price*c.qty).toLocaleString('en-IN')}`).join('\n');
+    const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
+    const msg = `🛍️ *New Order — Bazaar*\n\n👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n📍 *Address:* ${address}\n\n📦 *Items:*\n${items}\n\n💰 *Total: ₹${total.toLocaleString('en-IN')}*\n\n_Order placed via Bazaar website_`;
+    window.open(`https://wa.me/${window.WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+    cart = []; saveCart(); updateCartUI(); renderProducts();
+    document.getElementById('checkout-modal').classList.remove('open');
+    document.getElementById('cart-drawer').classList.remove('open');
+    document.getElementById('cart-overlay').classList.remove('open');
+    showToast('Order sent via WhatsApp! 🎉', 'success');
+  };
+
+  // ---- CHATBOT ----
+  const chatResponses = {
+    products: { user: '🛍️ View Products', bot: 'Check out all our fresh products below! 👇 Use the category filters to find exactly what you\'re looking for.' },
+    order: { user: '📦 Order Help', bot: 'Add items to cart 🛒 → Click "Proceed to Order" → Fill your name, phone & address → We\'ll send your order via WhatsApp! Easy!' },
+    delivery: { user: '🚚 Delivery Info', bot: 'We deliver within the city 6 days a week, 10am–6pm. Delivery is FREE on orders above ₹500! 🎉' },
+    contact: { user: '📞 Contact Us', bot: `You can reach us on WhatsApp: +${window.WA_NUMBER} or use the chat button below. We respond within minutes! ⚡` },
+  };
+  let chatOpen = false;
+  window.toggleChatbot = () => {
+    chatOpen = !chatOpen;
+    document.getElementById('chatbot-panel').classList.toggle('open', chatOpen);
+    document.getElementById('chatbot-btn').textContent = chatOpen ? '✕' : '💬';
+  };
+  window.chatOption = (type) => {
+    const r = chatResponses[type]; if (!r) return;
+    const msgs = document.getElementById('chatbot-messages');
+    msgs.innerHTML += `<div class="chat-msg user">${r.user}</div>`;
+    setTimeout(() => {
+      msgs.innerHTML += `<div class="chat-msg bot">${r.bot}</div>`;
+      msgs.scrollTop = msgs.scrollHeight;
+      if (type === 'products') document.querySelector('.products-section').scrollIntoView({behavior:'smooth'});
+    }, 400);
+    msgs.scrollTop = msgs.scrollHeight;
+  };
+
+  // ---- TOAST ----
+  window.showToast = (msg, type='') => {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast show ${type}`;
+    setTimeout(() => t.className = 'toast', 3000);
+  };
+
+  // Init
+  updateCartUI();
+</script>
+</body>
+</html>

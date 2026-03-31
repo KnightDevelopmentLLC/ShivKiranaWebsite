@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bazaar Admin — Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>" />
+</head>
+<body class="admin-body">
+
+<!-- PASSWORD GATE (shown before page loads) -->
+<div id="auth-gate" style="position:fixed;inset:0;background:var(--ink);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:24px;">
+  <div style="text-align:center;color:var(--white);margin-bottom:8px">
+    <div style="font-size:2.5rem;margin-bottom:12px">⚙️</div>
+    <h1 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:6px">Admin Access</h1>
+    <p style="opacity:0.6;font-size:0.9rem">Enter your password to continue</p>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px;width:300px;">
+    <input id="auth-input" type="password" class="input-field" placeholder="Admin password" onkeydown="if(event.key==='Enter')checkAuth()" style="text-align:center;font-size:1rem;padding:14px" />
+    <button class="btn btn-primary btn-lg" style="justify-content:center" onclick="checkAuth()">Enter Dashboard</button>
+    <a href="index.html" style="text-align:center;color:var(--sand);font-size:0.85rem;opacity:0.6;text-decoration:none;">← Back to store</a>
+  </div>
+  <div id="auth-error" style="color:#F5A857;font-size:0.85rem;display:none">❌ Incorrect password. Try again.</div>
+</div>
+
+<!-- TOPBAR -->
+<header class="admin-topbar" id="admin-ui" style="display:none">
+  <div class="admin-topbar-brand">
+    🛍️ Bazaar <span>Admin</span>
+  </div>
+  <div class="admin-topbar-right">
+    <span id="topbar-time"></span>
+    <a href="index.html" target="_blank" style="color:var(--sand);text-decoration:none;opacity:0.7;font-size:0.85rem">View Store ↗</a>
+    <button onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="admin-layout" id="admin-layout" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Main</div>
+      <a class="sidebar-item active" data-page="dashboard" onclick="showPage('dashboard', this)"><span class="icon">📊</span> Dashboard</a>
+      <a class="sidebar-item" data-page="products" onclick="showPage('products', this)"><span class="icon">📦</span> Products</a>
+      <a class="sidebar-item" data-page="add-product" onclick="showPage('add-product', this)"><span class="icon">➕</span> Add Product</a>
+      <a class="sidebar-item" data-page="categories" onclick="showPage('categories', this)"><span class="icon">🏷️</span> Categories</a>
+    </div>
+    <div class="sidebar-section" style="margin-top:16px">
+      <div class="sidebar-label">Store</div>
+      <a class="sidebar-item" href="index.html" target="_blank"><span class="icon">🌐</span> View Store</a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="admin-main">
+
+    <!-- DASHBOARD PAGE -->
+    <div class="admin-page active" id="page-dashboard">
+      <div class="page-header">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Welcome back! Here's your store overview.</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-label">Total Products</div>
+          <div class="stat-value" id="stat-products">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏷️</div>
+          <div class="stat-label">Categories</div>
+          <div class="stat-value" id="stat-categories">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-label">Low Stock</div>
+          <div class="stat-value" id="stat-low-stock">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-label">In Stock</div>
+          <div class="stat-value" id="stat-in-stock">—</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Recent Products</span>
+          <button class="btn btn-primary btn-sm" onclick="showPage('add-product', document.querySelector('[data-page=add-product]'))">+ Add Product</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th></tr></thead>
+            <tbody id="dashboard-recent-table"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--warm-gray)">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS PAGE -->
+    <div class="admin-page" id="page-products">
+      <div class="page-header">
+        <h1 class="page-title">All Products</h1>
+        <p class="page-subtitle">Manage your product catalogue.</p>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div style="display:flex;gap:10px;align-items:center">
+            <input class="input-field" id="product-search" type="text" placeholder="Search products…" oninput="filterTable()" style="width:220px;padding:8px 14px" />
+            <select class="input-field" id="product-cat-filter" onchange="filterTable()" style="width:160px;padding:8px 14px">
+              <option value="">All categories</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="showPage('add-product', document.querySelector('[data-page=add-product]'))">+ Add Product</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Qty</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="products-table"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--warm-gray)">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD / EDIT PRODUCT PAGE -->
+    <div class="admin-page" id="page-add-product">
+      <div class="page-header">
+        <h1 class="page-title" id="add-product-title">Add New Product</h1>
+        <p class="page-subtitle">Fill in the details below. Image should be a Cloudinary URL.</p>
+      </div>
+      <div class="panel" style="max-width:680px">
+        <div class="panel-body">
+          <input type="hidden" id="edit-product-id" />
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="label">Product Name *</label>
+              <input class="input-field" id="p-name" type="text" placeholder="e.g. Organic Tomatoes" />
+            </div>
+            <div class="form-group">
+              <label class="label">Category *</label>
+              <input class="input-field" id="p-category" type="text" placeholder="e.g. Vegetables" list="category-datalist" />
+              <datalist id="category-datalist"></datalist>
+            </div>
+            <div class="form-group">
+              <label class="label">Price (₹) *</label>
+              <input class="input-field" id="p-price" type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
+            <div class="form-group">
+              <label class="label">Quantity *</label>
+              <input class="input-field" id="p-quantity" type="number" min="0" placeholder="e.g. 50" />
+            </div>
+            <div class="form-group full">
+              <label class="label">Image URL (Cloudinary) *</label>
+              <input class="input-field" id="p-image" type="url" placeholder="https://res.cloudinary.com/…/image/upload/…" oninput="previewImage(this.value)" />
+              <img id="img-preview" class="img-preview" src="" alt="Preview" />
+              <small style="color:var(--warm-gray);font-size:0.8rem;margin-top:6px;display:block">
+                💡 Upload your image to <a href="https://cloudinary.com" target="_blank" style="color:var(--saffron)">Cloudinary.com</a> (free), then paste the URL here.
+              </small>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:8px">
+            <button class="btn btn-ghost" onclick="resetForm()">Reset</button>
+            <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES PAGE -->
+    <div class="admin-page" id="page-categories">
+      <div class="page-header">
+        <h1 class="page-title">Categories</h1>
+        <p class="page-subtitle">Manage your product categories.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Add Category</span></div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="label">Category Name *</label>
+              <input class="input-field" id="new-category" type="text" placeholder="e.g. Dairy Products" />
+            </div>
+            <div class="form-group">
+              <label class="label">Category Icon (emoji)</label>
+              <input class="input-field" id="new-cat-icon" type="text" placeholder="e.g. 🥛" maxlength="4" />
+            </div>
+            <button class="btn btn-primary" onclick="addCategory()">Add Category</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">All Categories</span></div>
+          <div class="panel-body" id="categories-list" style="display:flex;flex-wrap:wrap;gap:10px">
+            <span style="color:var(--warm-gray);font-size:0.9rem">Loading…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h2 class="modal-title">Edit Product</h2>
+    <p class="modal-subtitle">Update the product details below.</p>
+    <input type="hidden" id="modal-product-id" />
+    <div class="form-group">
+      <label class="label">Name</label>
+      <input class="input-field" id="modal-name" type="text" />
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="label">Price (₹)</label>
+        <input class="input-field" id="modal-price" type="number" />
+      </div>
+      <div class="form-group">
+        <label class="label">Quantity</label>
+        <input class="input-field" id="modal-qty" type="number" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="label">Category</label>
+      <input class="input-field" id="modal-category" type="text" list="category-datalist" />
+    </div>
+    <div class="form-group">
+      <label class="label">Image URL</label>
+      <input class="input-field" id="modal-image" type="url" />
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeEditModal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="updateProduct()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:12px">🗑️</div>
+    <h2 class="modal-title">Delete Product?</h2>
+    <p class="modal-subtitle" id="delete-modal-name">This action cannot be undone.</p>
+    <div style="display:flex;gap:12px;margin-top:24px">
+      <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" style="flex:1;justify-content:center" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE + ADMIN LOGIC -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, updateDoc, deleteDoc,
+    doc, onSnapshot, query, orderBy, setDoc
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // ⚠️ REPLACE WITH YOUR FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  // ---- ADMIN PASSWORD (Change this!) ----
+  const ADMIN_PASSWORD = 'bazaar2025';
+
+  // ---- AUTH ----
+  window.checkAuth = () => {
+    const pw = document.getElementById('auth-input').value;
+    if (pw === ADMIN_PASSWORD) {
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('admin-ui').style.display = 'flex';
+      document.getElementById('admin-layout').style.display = 'grid';
+      sessionStorage.setItem('bazaar_admin', '1');
+      initAdmin();
+    } else {
+      document.getElementById('auth-error').style.display = 'block';
+      document.getElementById('auth-input').value = '';
+      document.getElementById('auth-input').focus();
+    }
+  };
+  window.logout = () => {
+    sessionStorage.removeItem('bazaar_admin');
+    location.reload();
+  };
+  // Auto-login if session exists
+  if (sessionStorage.getItem('bazaar_admin')) {
+    document.getElementById('auth-gate').style.display = 'none';
+    document.getElementById('admin-ui').style.display = 'flex';
+    document.getElementById('admin-layout').style.display = 'grid';
+    window.addEventListener('DOMContentLoaded', initAdmin);
+  }
+
+  // ---- FIREBASE INIT ----
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  let allProducts = [];
+  let allCategories = [];
+  let pendingDeleteId = null;
+
+  function initAdmin() {
+    updateClock();
+    setInterval(updateClock, 1000);
+    listenProducts();
+    listenCategories();
+  }
+
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('topbar-time').textContent = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // ---- REAL-TIME LISTENERS ----
+  function listenProducts() {
+    const q = query(collection(db, 'products'), orderBy('name'));
+    onSnapshot(q, (snap) => {
+      allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderProductsTable();
+      renderDashboard();
+      updateCategoryDatalist();
+    }, err => {
+      console.error('Products error:', err);
+      showToast('Firebase error. Check config!', 'error');
+    });
+  }
+
+  function listenCategories() {
+    onSnapshot(collection(db, 'categories'), (snap) => {
+      allCategories = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderCategoriesList();
+      updateCategoryDatalist();
+      updateCatFilter();
+    });
+  }
+
+  // ---- DASHBOARD ----
+  function renderDashboard() {
+    const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+    const lowStock = allProducts.filter(p => (p.quantity ?? 0) <= 5);
+    const inStock = allProducts.filter(p => (p.quantity ?? 0) > 5);
+    document.getElementById('stat-products').textContent = allProducts.length;
+    document.getElementById('stat-categories').textContent = cats.length;
+    document.getElementById('stat-low-stock').textContent = lowStock.length;
+    document.getElementById('stat-in-stock').textContent = inStock.length;
+    const tbody = document.getElementById('dashboard-recent-table');
+    if (!allProducts.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--warm-gray)">No products yet.</td></tr>'; return; }
+    tbody.innerHTML = allProducts.slice(0, 8).map(p => `
+      <tr>
+        <td><img class="prod-img" src="${p.image || ''}" alt="${p.name}" onerror="this.style.background='var(--sand)'" /></td>
+        <td class="prod-name">${p.name}</td>
+        <td><span class="badge badge-orange">${p.category || '—'}</span></td>
+        <td class="prod-price">₹${Number(p.price).toLocaleString('en-IN')}</td>
+        <td class="${(p.quantity??0) <= 5 ? 'stock-low' : 'stock-ok'}">${p.quantity ?? '—'}</td>
+      </tr>`).join('');
+  }
+
+  // ---- PRODUCTS TABLE ----
+  function renderProductsTable() {
+    const search = (document.getElementById('product-search')?.value || '').toLowerCase();
+    const catFilter = document.getElementById('product-cat-filter')?.value || '';
+    let filtered = allProducts;
+    if (search) filtered = filtered.filter(p => p.name?.toLowerCase().includes(search) || p.category?.toLowerCase().includes(search));
+    if (catFilter) filtered = filtered.filter(p => p.category === catFilter);
+    const tbody = document.getElementById('products-table');
+    if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--warm-gray)">No products found.</td></tr>'; return; }
+    tbody.innerHTML = filtered.map(p => `
+      <tr>
+        <td><img class="prod-img" src="${p.image || ''}" alt="${p.name}" onerror="this.style.background='var(--sand)'" /></td>
+        <td class="prod-name">${p.name}</td>
+        <td><span class="badge badge-orange">${p.category || '—'}</span></td>
+        <td class="prod-price">₹${Number(p.price).toLocaleString('en-IN')}</td>
+        <td class="${(p.quantity??0) <= 5 ? 'stock-low' : 'stock-ok'}">${p.quantity ?? '—'}</td>
+        <td>
+          <div class="action-btns">
+            <button class="btn btn-outline btn-sm" onclick='openEditModal(${JSON.stringify(p).replace(/'/g, "\\'")})'>✏️ Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="openDeleteModal('${p.id}','${p.name.replace(/'/g,"\\'")}')">🗑️</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+  window.filterTable = renderProductsTable;
+
+  function updateCatFilter() {
+    const sel = document.getElementById('product-cat-filter');
+    if (!sel) return;
+    const current = sel.value;
+    const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+    sel.innerHTML = '<option value="">All categories</option>' + cats.map(c => `<option value="${c}" ${c===current?'selected':''}>${c}</option>`).join('');
+  }
+
+  function updateCategoryDatalist() {
+    const dl = document.getElementById('category-datalist');
+    if (!dl) return;
+    const cats = [...new Set([...allProducts.map(p=>p.category), ...allCategories.map(c=>c.name)].filter(Boolean))];
+    dl.innerHTML = cats.map(c => `<option value="${c}">`).join('');
+  }
+
+  // ---- ADD PRODUCT ----
+  window.saveProduct = async () => {
+    const name = document.getElementById('p-name').value.trim();
+    const category = document.getElementById('p-category').value.trim();
+    const price = parseFloat(document.getElementById('p-price').value);
+    const quantity = parseInt(document.getElementById('p-quantity').value);
+    const image = document.getElementById('p-image').value.trim();
+    if (!name || !category || isNaN(price) || isNaN(quantity) || !image) {
+      showToast('Please fill all fields', 'error'); return;
+    }
+    const editId = document.getElementById('edit-product-id').value;
+    try {
+      if (editId) {
+        await updateDoc(doc(db, 'products', editId), { name, category, price, quantity, image });
+        showToast('Product updated! ✅', 'success');
+      } else {
+        await addDoc(collection(db, 'products'), { name, category, price, quantity, image, createdAt: Date.now() });
+        showToast('Product added! 🎉', 'success');
+      }
+      resetForm();
+      showPage('products', document.querySelector('[data-page=products]'));
+    } catch (e) {
+      console.error(e); showToast('Error saving product. Check Firebase config!', 'error');
+    }
+  };
+  window.resetForm = () => {
+    ['p-name','p-category','p-price','p-quantity','p-image'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+    document.getElementById('edit-product-id').value = '';
+    document.getElementById('add-product-title').textContent = 'Add New Product';
+    const prev = document.getElementById('img-preview'); if(prev) prev.style.display='none';
+  };
+  window.previewImage = (url) => {
+    const prev = document.getElementById('img-preview');
+    if (!prev) return;
+    if (url) { prev.src = url; prev.style.display = 'block'; }
+    else { prev.style.display = 'none'; }
+  };
+
+  // ---- EDIT MODAL ----
+  window.openEditModal = (product) => {
+    document.getElementById('modal-product-id').value = product.id;
+    document.getElementById('modal-name').value = product.name || '';
+    document.getElementById('modal-price').value = product.price || '';
+    document.getElementById('modal-qty').value = product.quantity || '';
+    document.getElementById('modal-category').value = product.category || '';
+    document.getElementById('modal-image').value = product.image || '';
+    document.getElementById('edit-modal').classList.add('open');
+  };
+  window.closeEditModal = () => document.getElementById('edit-modal').classList.remove('open');
+  window.updateProduct = async () => {
+    const id = document.getElementById('modal-product-id').value;
+    const data = {
+      name: document.getElementById('modal-name').value.trim(),
+      price: parseFloat(document.getElementById('modal-price').value),
+      quantity: parseInt(document.getElementById('modal-qty').value),
+      category: document.getElementById('modal-category').value.trim(),
+      image: document.getElementById('modal-image').value.trim(),
+    };
+    if (!data.name || isNaN(data.price)) { showToast('Please fill required fields', 'error'); return; }
+    try {
+      await updateDoc(doc(db, 'products', id), data);
+      showToast('Product updated! ✅', 'success');
+      closeEditModal();
+    } catch(e) { console.error(e); showToast('Update failed!', 'error'); }
+  };
+
+  // ---- DELETE ----
+  window.openDeleteModal = (id, name) => {
+    pendingDeleteId = id;
+    document.getElementById('delete-modal-name').textContent = `"${name}" will be permanently deleted.`;
+    document.getElementById('delete-modal').classList.add('open');
+  };
+  window.closeDeleteModal = () => { document.getElementById('delete-modal').classList.remove('open'); pendingDeleteId = null; };
+  window.confirmDelete = async () => {
+    if (!pendingDeleteId) return;
+    try {
+      await deleteDoc(doc(db, 'products', pendingDeleteId));
+      showToast('Product deleted!', 'success');
+      closeDeleteModal();
+    } catch(e) { console.error(e); showToast('Delete failed!', 'error'); }
+  };
+
+  // ---- CATEGORIES ----
+  function renderCategoriesList() {
+    const container = document.getElementById('categories-list');
+    if (!container) return;
+    const cats = [...new Set([...allProducts.map(p=>p.category), ...allCategories.map(c=>c.name)].filter(Boolean))];
+    if (!cats.length) { container.innerHTML = '<span style="color:var(--warm-gray);font-size:0.9rem">No categories yet.</span>'; return; }
+    container.innerHTML = cats.map(c => `<span class="tag" style="font-size:0.95rem;padding:8px 16px">${c}</span>`).join('');
+  }
+  window.addCategory = async () => {
+    const name = document.getElementById('new-category').value.trim();
+    const icon = document.getElementById('new-cat-icon').value.trim();
+    if (!name) { showToast('Enter a category name', 'error'); return; }
+    try {
+      await setDoc(doc(db, 'categories', name.toLowerCase().replace(/\s+/g,'-')), { name, icon, createdAt: Date.now() });
+      document.getElementById('new-category').value = '';
+      document.getElementById('new-cat-icon').value = '';
+      showToast(`Category "${name}" added! 🏷️`, 'success');
+    } catch(e) { console.error(e); showToast('Error adding category', 'error'); }
+  };
+
+  // ---- PAGE NAVIGATION ----
+  window.showPage = (pageId, el) => {
+    document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+    const page = document.getElementById(`page-${pageId}`);
+    if (page) page.classList.add('active');
+    if (el) el.classList.add('active');
+    if (pageId === 'add-product') resetForm();
+  };
+
+  // ---- TOAST ----
+  window.showToast = (msg, type='') => {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast show ${type}`;
+    setTimeout(() => t.className = 'toast', 3200);
+  };
+
+  // Check session on load
+  if (sessionStorage.getItem('bazaar_admin')) initAdmin();
+</script>
+</body>
+</html>
