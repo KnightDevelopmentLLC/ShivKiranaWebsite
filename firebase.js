@@ -1,16 +1,21 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// ============================================================
+//  firebase.js  –  Shared Firebase initialisation
+//  Replace the firebaseConfig values with YOUR project's config
+//  from: Firebase Console → Project Settings → Your apps → SDK
+// ============================================================
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// 🔴 REPLACE THESE WITH YOUR OWN FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSyAzYesdT-95K86IbvyUCPDy0BvGJBtn7Jk",
-  authDomain: "shivkirana-bcd14.firebaseapp.com",
-  projectId: "shivkirana-bcd14",
-  storageBucket: "shivkirana-bcd14.appspot.com",
-  messagingSenderId: "523436780783",
-  appId: "1:523436780783:web:b8007a461d210d68b3bf1a"
+  apiKey:            "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  authDomain:        "your-project-id.firebaseapp.com",
+  projectId:         "your-project-id",
+  storageBucket:     "your-project-id.appspot.com",
+  messagingSenderId: "000000000000",
+  appId:             "1:000000000000:web:XXXXXXXXXXXXXXXXXXXXXXXX"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-export { db };
+export const db  = getFirestore(app);
