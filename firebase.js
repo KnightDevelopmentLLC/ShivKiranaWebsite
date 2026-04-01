@@ -1,21 +1,53 @@
 // ============================================================
-//  firebase.js  –  Shared Firebase initialisation
-//  Replace the firebaseConfig values with YOUR project's config
-//  from: Firebase Console → Project Settings → Your apps → SDK
+// firebase.js — Central Firebase Configuration for Shiv Kirana
 // ============================================================
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  orderBy,
+  serverTimestamp,
+  getDocs,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 🔴 REPLACE THESE WITH YOUR OWN FIREBASE CONFIG
+// 🔥 REPLACE with your Firebase project config
 const firebaseConfig = {
-  apiKey: "AIzaSyAzYesdT-95K86IbvyUCPDy0BvGJBtn7Jk",
-  authDomain: "shivkirana-bcd14.firebaseapp.com",
-  projectId: "shivkirana-bcd14",
-  storageBucket: "shivkirana-bcd14.firebasestorage.app",
-  messagingSenderId: "523436780783",
-  appId: "1:523436780783:web:0f6c69535517bea2b3bf1a"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
 };
 
-const app = initializeApp(firebaseConfig);
-export const db  = getFirestore(app);
+// Initialize Firebase (singleton guard)
+let app;
+let db;
+
+try {
+  app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+} catch (e) {
+  if (e.code !== "app/duplicate-app") throw e;
+}
+
+export {
+  db,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  orderBy,
+  serverTimestamp,
+  getDocs,
+};
