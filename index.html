@@ -4,32 +4,32 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shiv Kirana — Fresh Grocery Store</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-<!-- ── NAVBAR ─────────────────────────────────────────── -->
+<!-- NAVBAR -->
 <nav class="navbar">
   <div class="brand">🛒 Shiv <span>Kirana</span></div>
-  <button class="cart-btn" onclick="openCart()">
+  <button class="cart-btn" id="cart-btn" onclick="openCart()">
     🛍️ Cart <span id="cart-count">0</span>
   </button>
 </nav>
 
-<!-- ── HERO ───────────────────────────────────────────── -->
+<!-- HERO -->
 <div class="hero">
-  <h2>Fresh Groceries, Delivered Fresh 🌿</h2>
-  <p>Quality products at everyday prices — right from your neighbourhood store</p>
+  <div class="hero-inner">
+    <h2>🌿 Fresh Groceries at Your Door</h2>
+    <p>Quality products · Everyday prices · Your trusted neighbourhood store</p>
+  </div>
 </div>
 
-<!-- ── FILTER BAR ─────────────────────────────────────── -->
+<!-- FILTER BAR -->
 <div class="filter-bar" id="filter-bar">
-  <button class="filter-btn active" data-cat="all" onclick="filterCategory('all', this)">All</button>
+  <button class="filter-btn active" onclick="filterCat('all', this)">All</button>
 </div>
 
-<!-- ── PRODUCT SECTIONS ───────────────────────────────── -->
+<!-- PRODUCTS -->
 <main id="products-container">
   <div class="loading">
     <div class="spinner"></div>
@@ -37,137 +37,146 @@
   </div>
 </main>
 
-<!-- ── CART OVERLAY + SIDEBAR ─────────────────────────── -->
+<!-- CART OVERLAY -->
 <div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
 
-<div class="cart-sidebar" id="cart-sidebar">
+<!-- CART SIDEBAR -->
+<aside class="cart-sidebar" id="cart-sidebar">
   <div class="cart-header">
     <h3>🛍️ Your Cart</h3>
     <button class="close-cart" onclick="closeCart()">✕</button>
   </div>
 
   <div class="cart-items" id="cart-items">
-    <p class="empty-cart">Your cart is empty</p>
+    <p class="empty-cart"><span class="icon">🛒</span>Your cart is empty</p>
   </div>
 
   <div class="cart-footer">
     <div class="cart-total">
       <span>Total</span>
-      <span id="cart-total">₹0</span>
+      <span id="cart-total">₹0.00</span>
     </div>
 
-    <!-- Checkout form -->
-    <div class="checkout-form" id="checkout-form" style="display:none;">
-      <input type="text"  id="cust-name"    placeholder="Your Name *" />
-      <input type="tel"   id="cust-phone"   placeholder="Phone Number *" />
-      <input type="text"  id="cust-address" placeholder="Delivery Address *" />
+    <div class="checkout-form" id="checkout-form" style="display:none">
+      <input type="text" id="cust-name"    placeholder="Your Name *" autocomplete="name" />
+      <input type="tel"  id="cust-phone"   placeholder="Phone Number *" autocomplete="tel" />
+      <input type="text" id="cust-address" placeholder="Delivery Address *" />
     </div>
 
-    <button class="btn btn-green" id="checkout-btn" onclick="showCheckout()" style="width:100%; justify-content:center;">
-      Proceed to Checkout
-    </button>
-    <button class="btn btn-orange" id="whatsapp-btn" onclick="sendWhatsApp()"
-            style="width:100%; justify-content:center; display:none;">
+    <button class="btn btn-green"  id="checkout-btn" onclick="showCheckout()">Proceed to Checkout →</button>
+    <button class="btn btn-orange" id="whatsapp-btn" onclick="sendWhatsApp()" style="display:none">
       📱 Order via WhatsApp
     </button>
   </div>
-</div>
+</aside>
 
-<!-- ── FOOTER ─────────────────────────────────────────── -->
+<!-- FOOTER -->
 <footer>
   <div>
     <h4>🛒 Shiv Kirana</h4>
-    <p>Your trusted local grocery store for fresh and quality products.</p>
+    <p>Your trusted local grocery store for fresh and quality products at everyday prices.</p>
   </div>
   <div>
-    <h4>📍 Find Us</h4>
-    <p>123, Main Market Road<br/>Patna, Bihar — 800001</p>
+    <h4>📍 Address</h4>
+    <p>123, Main Market Road<br>Patna, Bihar — 800001</p>
   </div>
   <div>
-    <h4>📞 Contact</h4>
-    <p>+91 91629 13553<br/>Mon–Sun: 7 AM – 9 PM</p>
+    <h4>📞 Contact & Timing</h4>
+    <p>+91 98765 43210<br>Mon – Sun: 7:00 AM – 9:00 PM</p>
   </div>
 </footer>
 <div class="footer-bottom">© 2025 Shiv Kirana. All rights reserved.</div>
 
-<!-- ── SCRIPT ─────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<!-- SCRIPT -->
 <script type="module">
   import { db } from "./firebase.js";
   import {
-    collection, onSnapshot, query, orderBy
+    collection, onSnapshot
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  /* ── State ── */
-  let allProducts   = [];
-  let cart          = JSON.parse(localStorage.getItem("shiv-cart") || "[]");
-  let activeFilter  = "all";
-  let checkoutOpen  = false;
+  /* ── state ── */
+  let allProducts  = [];
+  let activeFilter = "all";
+  let cart = [];
 
-  /* ── Firestore: real-time listener ── */
-  const q = query(collection(db, "products"), orderBy("name"));
-  onSnapshot(q, (snap) => {
-    allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  // load cart from localStorage safely
+  try { cart = JSON.parse(localStorage.getItem("shiv-cart") || "[]"); } catch(e) { cart = []; }
+
+  /* ── Firestore listener (NO orderBy — avoids index errors) ── */
+  onSnapshot(collection(db, "products"), (snap) => {
+    allProducts = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => a.name.localeCompare(b.name));   // client-side sort
+
     buildFilterBar();
     renderProducts();
   }, (err) => {
-    console.error("Firestore error:", err);
+    console.error("Firestore:", err);
+    let msg = "⚠️ Could not load products.";
+    if (err.code === "permission-denied") {
+      msg = "⚠️ Firebase permission denied. Check Firestore Rules.";
+    } else if (err.message && err.message.includes("projectId")) {
+      msg = "⚠️ Invalid Firebase config. Update firebase.js with your project details.";
+    }
     document.getElementById("products-container").innerHTML =
-      `<p class="loading" style="color:#e53935;">Failed to load products. Check Firebase config.</p>`;
+      `<p class="loading error-msg">${msg}</p>`;
   });
 
-  /* ── Build category filter buttons ── */
+  /* ── Build filter bar ── */
   function buildFilterBar() {
     const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
-    const bar  = document.getElementById("filter-bar");
+    const bar = document.getElementById("filter-bar");
     bar.innerHTML = `<button class="filter-btn ${activeFilter==='all'?'active':''}"
-        data-cat="all" onclick="filterCategory('all',this)">All</button>`;
+        onclick="filterCat('all',this)">All</button>`;
     cats.forEach(cat => {
-      const active = activeFilter === cat ? "active" : "";
-      bar.innerHTML += `<button class="filter-btn ${active}"
-          data-cat="${cat}" onclick="filterCategory('${cat}',this)">${cat}</button>`;
+      bar.innerHTML += `<button class="filter-btn ${activeFilter===cat?'active':''}"
+          onclick="filterCat('${escHtml(cat)}',this)">${escHtml(cat)}</button>`;
     });
   }
 
-  /* ── Render product grid (grouped by category) ── */
+  /* ── Render products ── */
   function renderProducts() {
     const container = document.getElementById("products-container");
-    let filtered = activeFilter === "all"
+    const list = activeFilter === "all"
       ? allProducts
       : allProducts.filter(p => p.category === activeFilter);
 
-    if (filtered.length === 0) {
+    if (list.length === 0) {
       container.innerHTML = `<p class="loading">No products found.</p>`;
       return;
     }
 
-    // Group by category
+    // group by category
     const groups = {};
-    filtered.forEach(p => {
-      const key = p.category || "Other";
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(p);
+    list.forEach(p => {
+      const k = p.category || "Other";
+      if (!groups[k]) groups[k] = [];
+      groups[k].push(p);
     });
 
     let html = "";
     Object.keys(groups).sort().forEach(cat => {
-      html += `<h2 class="section-title">🟢 ${cat}</h2>
+      html += `<h2 class="section-title">🟢 ${escHtml(cat)}</h2>
                <div class="product-grid">`;
       groups[cat].forEach(p => {
-        const inStock  = p.quantity > 0;
-        const imgSrc   = p.imageUrl || "https://via.placeholder.com/300x200?text=No+Image";
-        const priceStr = `₹${Number(p.price).toFixed(2)}`;
+        const inStock = Number(p.quantity) > 0;
+        const img = p.imageUrl
+          ? escHtml(p.imageUrl)
+          : "https://placehold.co/300x200/e8f5e9/2e7d32?text=No+Image";
+        const price = `₹${Number(p.price || 0).toFixed(2)}`;
         html += `
           <div class="product-card">
-            <img src="${imgSrc}" alt="${p.name}" loading="lazy"
-                 onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'"/>
+            <img src="${img}" alt="${escHtml(p.name)}" loading="lazy"
+                 onerror="this.src='https://placehold.co/300x200/f5f5f5/aaa?text=No+Image'"/>
             <div class="card-body">
-              <div class="card-cat">${p.category || ""}</div>
-              <div class="card-name">${p.name}</div>
-              <div class="card-price">${priceStr}</div>
+              <div class="card-cat">${escHtml(p.category || "")}</div>
+              <div class="card-name">${escHtml(p.name)}</div>
+              <div class="card-price">${price}</div>
               ${inStock
-                ? `<button class="add-btn" onclick="addToCart('${p.id}')">+ Add to Cart</button>`
-                : `<div class="out-of-stock">Out of Stock</div>`
-              }
+                ? `<button class="add-btn" data-id="${p.id}">+ Add to Cart</button>`
+                : `<div class="out-of-stock">❌ Out of Stock</div>`}
             </div>
           </div>`;
       });
@@ -175,147 +184,141 @@
     });
 
     container.innerHTML = html;
+
+    // attach add-to-cart events
+    container.querySelectorAll(".add-btn").forEach(btn => {
+      btn.addEventListener("click", () => addToCart(btn.dataset.id));
+    });
   }
 
-  /* ── Category filter ── */
-  window.filterCategory = function(cat, btn) {
+  /* ── Filter ── */
+  window.filterCat = function(cat, btn) {
     activeFilter = cat;
     document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     renderProducts();
   };
 
-  /* ── Cart helpers ── */
-  function saveCart() { localStorage.setItem("shiv-cart", JSON.stringify(cart)); }
-
-  function updateCartCount() {
-    const total = cart.reduce((sum, i) => sum + i.qty, 0);
-    document.getElementById("cart-count").textContent = total;
+  /* ── Cart ── */
+  function saveCart() {
+    try { localStorage.setItem("shiv-cart", JSON.stringify(cart)); } catch(e) {}
+  }
+  function updateCount() {
+    document.getElementById("cart-count").textContent = cart.reduce((s,i)=>s+i.qty,0);
   }
 
-  window.addToCart = function(id) {
-    const product = allProducts.find(p => p.id === id);
-    if (!product) return;
-    const existing = cart.find(i => i.id === id);
-    if (existing) {
-      existing.qty++;
-    } else {
-      cart.push({ id, name: product.name, price: product.price,
-                  imageUrl: product.imageUrl || "", qty: 1 });
-    }
-    saveCart();
-    updateCartCount();
-    renderCart();
-  };
+  function addToCart(id) {
+    const p = allProducts.find(x => x.id === id);
+    if (!p) return;
+    const ex = cart.find(i => i.id === id);
+    if (ex) { ex.qty++; }
+    else { cart.push({ id, name: p.name, price: Number(p.price), imageUrl: p.imageUrl||"", qty: 1 }); }
+    saveCart(); updateCount(); renderCartItems();
+    showToast(`✅ ${p.name} added to cart`);
+  }
 
   window.changeQty = function(id, delta) {
     const item = cart.find(i => i.id === id);
     if (!item) return;
     item.qty += delta;
     if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
-    saveCart(); updateCartCount(); renderCart();
+    saveCart(); updateCount(); renderCartItems();
   };
-
   window.removeItem = function(id) {
     cart = cart.filter(i => i.id !== id);
-    saveCart(); updateCartCount(); renderCart();
+    saveCart(); updateCount(); renderCartItems();
   };
 
-  /* ── Render cart sidebar ── */
-  function renderCart() {
-    const container = document.getElementById("cart-items");
-    if (cart.length === 0) {
-      container.innerHTML = `<p class="empty-cart">Your cart is empty</p>`;
-      document.getElementById("cart-total").textContent = "₹0";
+  function renderCartItems() {
+    const box = document.getElementById("cart-items");
+    if (!cart.length) {
+      box.innerHTML = `<p class="empty-cart"><span class="icon">🛒</span>Your cart is empty</p>`;
+      document.getElementById("cart-total").textContent = "₹0.00";
       return;
     }
-
-    let total = 0;
-    let html  = "";
+    let total = 0, html = "";
     cart.forEach(item => {
-      const subtotal = item.price * item.qty;
-      total += subtotal;
-      const imgSrc = item.imageUrl || "https://via.placeholder.com/50?text=?";
+      const sub = item.price * item.qty; total += sub;
+      const img = item.imageUrl || `https://placehold.co/52?text=?`;
       html += `
         <div class="cart-item">
-          <img src="${imgSrc}" alt="${item.name}"
-               onerror="this.src='https://via.placeholder.com/50?text=?'"/>
+          <img src="${escHtml(img)}" alt="${escHtml(item.name)}"
+               onerror="this.src='https://placehold.co/52?text=?'"/>
           <div class="cart-item-info">
-            <div class="name">${item.name}</div>
-            <div class="price">₹${Number(item.price).toFixed(2)} × ${item.qty} = ₹${subtotal.toFixed(2)}</div>
+            <div class="name">${escHtml(item.name)}</div>
+            <div class="price">₹${item.price.toFixed(2)} × ${item.qty} = ₹${sub.toFixed(2)}</div>
           </div>
           <div class="qty-controls">
-            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+            <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
             <span class="qty-num">${item.qty}</span>
-            <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+            <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
           </div>
           <button class="remove-btn" onclick="removeItem('${item.id}')" title="Remove">🗑</button>
         </div>`;
     });
-
-    container.innerHTML = html;
+    box.innerHTML = html;
     document.getElementById("cart-total").textContent = `₹${total.toFixed(2)}`;
   }
 
-  /* ── Cart open / close ── */
   window.openCart = function() {
+    renderCartItems();
     document.getElementById("cart-sidebar").classList.add("open");
     document.getElementById("cart-overlay").classList.add("open");
-    renderCart();
   };
   window.closeCart = function() {
     document.getElementById("cart-sidebar").classList.remove("open");
     document.getElementById("cart-overlay").classList.remove("open");
-    // reset checkout state
-    checkoutOpen = false;
+    // reset checkout
     document.getElementById("checkout-form").style.display = "none";
-    document.getElementById("checkout-btn").style.display  = "block";
+    document.getElementById("checkout-btn").style.display  = "";
     document.getElementById("whatsapp-btn").style.display  = "none";
   };
 
-  /* ── Checkout ── */
   window.showCheckout = function() {
-    if (cart.length === 0) { alert("Your cart is empty!"); return; }
-    checkoutOpen = true;
+    if (!cart.length) { showToast("⚠️ Your cart is empty!"); return; }
     document.getElementById("checkout-form").style.display = "flex";
     document.getElementById("checkout-form").style.flexDirection = "column";
     document.getElementById("checkout-btn").style.display  = "none";
-    document.getElementById("whatsapp-btn").style.display  = "block";
+    document.getElementById("whatsapp-btn").style.display  = "";
   };
 
   window.sendWhatsApp = function() {
     const name    = document.getElementById("cust-name").value.trim();
     const phone   = document.getElementById("cust-phone").value.trim();
     const address = document.getElementById("cust-address").value.trim();
-
     if (!name || !phone || !address) {
-      alert("Please fill in all fields (Name, Phone, Address)."); return;
+      showToast("⚠️ Please fill Name, Phone & Address"); return;
     }
-    if (cart.length === 0) { alert("Cart is empty!"); return; }
-
     let msg = `🛒 *New Order — Shiv Kirana*\n\n`;
-    msg += `👤 *Name:* ${name}\n`;
-    msg += `📞 *Phone:* ${phone}\n`;
-    msg += `📍 *Address:* ${address}\n\n`;
-    msg += `*Order Details:*\n`;
-
+    msg += `👤 *Name:* ${name}\n📞 *Phone:* ${phone}\n📍 *Address:* ${address}\n\n`;
+    msg += `📦 *Items:*\n`;
     let total = 0;
-    cart.forEach(item => {
-      const sub = item.price * item.qty;
-      total += sub;
-      msg += `• ${item.name} × ${item.qty} = ₹${sub.toFixed(2)}\n`;
+    cart.forEach(i => {
+      const sub = i.price * i.qty; total += sub;
+      msg += `• ${i.name} × ${i.qty} = ₹${sub.toFixed(2)}\n`;
     });
     msg += `\n💰 *Total: ₹${total.toFixed(2)}*`;
-
-    // Replace with store's WhatsApp number (with country code, no +)
+    // ⚠️ Replace with store owner's number (country code + number, no + or spaces)
     const storePhone = "919162913553";
-    const url = `https://wa.me/${storePhone}?text=${encodeURIComponent(msg)}`;
-    window.open(url, "_blank");
+    window.open(`https://wa.me/${storePhone}?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
+  /* ── Toast ── */
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2600);
+  }
+
+  /* ── Escape HTML ── */
+  function escHtml(str) {
+    return String(str||"")
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
   /* ── Init ── */
-  updateCartCount();
-  renderCart();
+  updateCount();
 </script>
 
 </body>
