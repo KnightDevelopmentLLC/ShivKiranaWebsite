@@ -19,12 +19,12 @@ import {
 
 // 🔥 REPLACE with your Firebase project config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  -95K86IbvyUCPDy0BvGJBtn7Jk",
+  authDomain: "shivkirana-bcd14.firebaseapp.com",
+  projectId: "shivkirana-bcd14",
+  storageBucket: "shivkirana-bcd14.firebasestorage.app",
+  messagingSenderId: "523436780783",
+  appId: "1:523436780783:web:035259590762be0cb3bf1a", 
 };
 
 // Initialize Firebase (singleton guard)
