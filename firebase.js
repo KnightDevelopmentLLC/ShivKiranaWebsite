@@ -1,14 +1,8 @@
-// ============================================
-// FIREBASE CONFIGURATION
-// Replace with your own Firebase project config
-// Get it from: https://console.firebase.google.com
-// ============================================
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAzYesdT-95K86IbvyUCPDy0BvGJBtn7Jk",
+  apiKey: "AIzaSyAzYesdT...",
   authDomain: "shivkirana-bcd14.firebaseapp.com",
   projectId: "shivkirana-bcd14",
   storageBucket: "shivkirana-bcd14.firebasestorage.app",
