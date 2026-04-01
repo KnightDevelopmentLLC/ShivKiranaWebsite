@@ -3,668 +3,320 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shiv Kirana — Fresh Groceries Delivered</title>
-  <meta name="description" content="Shiv Kirana - Your trusted local grocery store. Fresh produce, daily essentials and more delivered to your door." />
+  <title>Shiv Kirana — Fresh Grocery Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>" />
 </head>
 <body>
 
-<!-- ════════════════════════════════════════
-     NAVBAR
-════════════════════════════════════════ -->
-<nav class="navbar" role="navigation" aria-label="Main navigation">
-  <div class="nav-inner">
-    <div class="nav-logo">
-      <div class="logo-icon" aria-hidden="true">🌿</div>
-      <div>
-        <div class="logo-text">Shiv Kirana</div>
-        <div class="logo-sub">Fresh &amp; Local</div>
-      </div>
-    </div>
-
-    <div class="search-bar" role="search">
-      <span class="search-icon" aria-hidden="true">🔍</span>
-      <input
-        type="search"
-        id="searchInput"
-        placeholder="Search products…"
-        aria-label="Search products"
-        autocomplete="off"
-      />
-    </div>
-
-    <div class="nav-actions">
-      <button class="btn-cart" id="cartBtn" aria-label="Open cart" aria-expanded="false">
-        🛒 Cart
-        <span class="cart-badge hidden" id="cartBadge" aria-live="polite">0</span>
-      </button>
-    </div>
-  </div>
+<!-- ── NAVBAR ─────────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="brand">🛒 Shiv <span>Kirana</span></div>
+  <button class="cart-btn" onclick="openCart()">
+    🛍️ Cart <span id="cart-count">0</span>
+  </button>
 </nav>
 
-<!-- ════════════════════════════════════════
-     HERO
-════════════════════════════════════════ -->
-<section class="hero" aria-label="Welcome banner">
-  <div class="hero-content">
-    <h1>Fresh Groceries,<br>Right to Your Door 🌾</h1>
-    <p>Premium quality at honest prices. Order online and we'll deliver fresh to you.</p>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════
-     CATEGORY STRIP
-════════════════════════════════════════ -->
-<div class="categories-strip" role="navigation" aria-label="Product categories">
-  <div class="categories-inner" id="categoryBtns">
-    <button class="cat-btn active" data-cat="all">All Products</button>
-    <!-- Dynamic categories injected here -->
-  </div>
+<!-- ── HERO ───────────────────────────────────────────── -->
+<div class="hero">
+  <h2>Fresh Groceries, Delivered Fresh 🌿</h2>
+  <p>Quality products at everyday prices — right from your neighbourhood store</p>
 </div>
 
-<!-- ════════════════════════════════════════
-     PRODUCTS
-════════════════════════════════════════ -->
-<main class="products-section">
-  <div class="section-heading">
-    <h2 id="productsHeading">All Products</h2>
-    <span id="productCount" style="font-size:0.85rem;color:var(--text-muted);font-weight:700;"></span>
-  </div>
+<!-- ── FILTER BAR ─────────────────────────────────────── -->
+<div class="filter-bar" id="filter-bar">
+  <button class="filter-btn active" data-cat="all" onclick="filterCategory('all', this)">All</button>
+</div>
 
-  <div id="productsGrid" class="products-grid" role="list">
-    <div class="loader-wrap" id="productsLoader">
-      <div class="spinner"></div>
-      <p>Loading fresh products…</p>
-    </div>
+<!-- ── PRODUCT SECTIONS ───────────────────────────────── -->
+<main id="products-container">
+  <div class="loading">
+    <div class="spinner"></div>
+    Loading products…
   </div>
 </main>
 
-<!-- ════════════════════════════════════════
-     CART DRAWER
-════════════════════════════════════════ -->
-<div class="cart-overlay" id="cartOverlay" role="dialog" aria-modal="true" aria-label="Shopping cart"></div>
-<aside class="cart-drawer" id="cartDrawer" aria-label="Cart drawer">
+<!-- ── CART OVERLAY + SIDEBAR ─────────────────────────── -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+
+<div class="cart-sidebar" id="cart-sidebar">
   <div class="cart-header">
-    <h2>🛒 Your Cart</h2>
-    <button class="btn-close-cart" id="closeCartBtn" aria-label="Close cart">✕</button>
+    <h3>🛍️ Your Cart</h3>
+    <button class="close-cart" onclick="closeCart()">✕</button>
   </div>
-  <div class="cart-items" id="cartItems" role="list">
-    <div class="cart-empty" id="cartEmpty">
-      <div class="cart-empty-icon">🧺</div>
-      <p>Your cart is empty.</p>
-      <p style="font-size:0.83rem;color:var(--text-muted)">Add some fresh items!</p>
-    </div>
+
+  <div class="cart-items" id="cart-items">
+    <p class="empty-cart">Your cart is empty</p>
   </div>
-  <div class="cart-footer" id="cartFooter" style="display:none;">
+
+  <div class="cart-footer">
     <div class="cart-total">
-      <span>Total Amount</span>
-      <strong id="cartTotalAmt">₹0</strong>
+      <span>Total</span>
+      <span id="cart-total">₹0</span>
     </div>
-    <button class="btn btn-success btn-full" id="checkoutBtn">
-      🛍️ Proceed to Checkout
+
+    <!-- Checkout form -->
+    <div class="checkout-form" id="checkout-form" style="display:none;">
+      <input type="text"  id="cust-name"    placeholder="Your Name *" />
+      <input type="tel"   id="cust-phone"   placeholder="Phone Number *" />
+      <input type="text"  id="cust-address" placeholder="Delivery Address *" />
+    </div>
+
+    <button class="btn btn-green" id="checkout-btn" onclick="showCheckout()" style="width:100%; justify-content:center;">
+      Proceed to Checkout
+    </button>
+    <button class="btn btn-orange" id="whatsapp-btn" onclick="sendWhatsApp()"
+            style="width:100%; justify-content:center; display:none;">
+      📱 Order via WhatsApp
     </button>
   </div>
-</aside>
-
-<!-- ════════════════════════════════════════
-     CHECKOUT MODAL
-════════════════════════════════════════ -->
-<div class="modal-overlay" id="checkoutModal" role="dialog" aria-modal="true" aria-label="Checkout form">
-  <div class="modal-box">
-    <h2>📦 Place Your Order</h2>
-
-    <div class="form-group">
-      <label for="custName">Full Name</label>
-      <input type="text" id="custName" placeholder="Your full name" required />
-    </div>
-    <div class="form-group">
-      <label for="custPhone">Phone Number</label>
-      <input type="tel" id="custPhone" placeholder="10-digit mobile number" maxlength="10" required />
-    </div>
-    <div class="form-group">
-      <label for="custAddress">Delivery Address</label>
-      <textarea id="custAddress" placeholder="House no., Street, Area, City…" required></textarea>
-    </div>
-
-    <div style="background:var(--cream);border-radius:var(--radius-sm);padding:14px;margin-top:4px;">
-      <div style="font-weight:700;font-size:0.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;">Order Summary</div>
-      <div id="orderSummary"></div>
-      <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--cream-dark);">
-        <span style="font-weight:700;">Total</span>
-        <strong id="orderTotal" style="color:var(--terra);font-size:1.05rem;"></strong>
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn btn-outline" id="cancelCheckout">Cancel</button>
-      <button class="btn btn-whatsapp" id="sendWhatsapp" style="flex:1;">
-        📲 Send via WhatsApp
-      </button>
-    </div>
-  </div>
 </div>
 
-<!-- ════════════════════════════════════════
-     CHATBOT
-════════════════════════════════════════ -->
-<button class="chatbot-trigger" id="chatbotTrigger" aria-label="Open chatbot" aria-expanded="false">
-  💬
-</button>
-
-<div class="chatbot-window" id="chatbotWindow" role="dialog" aria-modal="false" aria-label="Chat assistant">
-  <div class="chat-header">
-    <div class="chat-avatar">🤖</div>
-    <div>
-      <div class="chat-title">Kiran — Assistant</div>
-      <div class="chat-sub">● Online</div>
-    </div>
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer>
+  <div>
+    <h4>🛒 Shiv Kirana</h4>
+    <p>Your trusted local grocery store for fresh and quality products.</p>
   </div>
-  <div class="chat-messages" id="chatMessages">
-    <div class="chat-msg bot">
-      👋 Namaste! I'm Kiran, your Shiv Kirana assistant.<br>How can I help you today?
-    </div>
+  <div>
+    <h4>📍 Find Us</h4>
+    <p>123, Main Market Road<br/>Patna, Bihar — 800001</p>
   </div>
-  <div class="chat-options">
-    <button class="chat-option-btn" data-reply="products">🛒 View Products</button>
-    <button class="chat-option-btn" data-reply="order">📦 Order Help</button>
-    <button class="chat-option-btn" data-reply="delivery">🚚 Delivery Info</button>
-    <button class="chat-option-btn" data-reply="contact">📞 Contact Us</button>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════
-     FOOTER
-════════════════════════════════════════ -->
-<footer class="store-footer">
-  <div class="footer-inner">
-    <div>
-      <div class="footer-logo"><span>Shiv</span> Kirana</div>
-      <p class="footer-tagline">Your neighbourhood's most trusted grocery store. Fresh produce, daily essentials, and more — all under one roof.</p>
-    </div>
-
-    <div class="footer-section">
-      <h4>Store Details</h4>
-      <div class="footer-detail">
-        <span class="fi">📍</span>
-        <span>Shop No. 12, Rajendra Nagar Main Road,<br>Patna, Bihar – 800016</span>
-      </div>
-      <div class="footer-detail">
-        <span class="fi">📞</span>
-        <span>+91 91629 13553</span>
-      </div>
-      <div class="footer-detail">
-        <span class="fi">⏰</span>
-        <span>Mon – Sat: 7:00 AM – 9:00 PM<br>Sunday: 8:00 AM – 1:00 PM</span>
-      </div>
-    </div>
-
-    <div class="footer-section">
-      <h4>Quick Links</h4>
-      <div class="footer-detail"><span class="fi">🛒</span><span>Shop Online</span></div>
-      <div class="footer-detail"><span class="fi">📲</span><span>Order on WhatsApp</span></div>
-      <div class="footer-detail"><span class="fi">💬</span><span>Live Chat Support</span></div>
-      <div class="footer-detail"><span class="fi">🔐</span><a href="admin.html" style="color:rgba(255,255,255,.7);text-decoration:underline;">Admin Panel</a></div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    &copy; 2025 Shiv Kirana. All rights reserved. Built with ❤️ for local shopkeepers.
+  <div>
+    <h4>📞 Contact</h4>
+    <p>+91 91629 13553<br/>Mon–Sun: 7 AM – 9 PM</p>
   </div>
 </footer>
+<div class="footer-bottom">© 2025 Shiv Kirana. All rights reserved.</div>
 
-<!-- ════════════════════════════════════════
-     TOAST CONTAINER
-════════════════════════════════════════ -->
-<div class="toast-container" id="toastContainer" aria-live="polite"></div>
-
-<!-- ════════════════════════════════════════
-     SCRIPTS
-════════════════════════════════════════ -->
+<!-- ── SCRIPT ─────────────────────────────────────────── -->
 <script type="module">
-import {
-  db,
-  collection,
-  onSnapshot,
-  query,
-  orderBy,
-} from "./firebase.js";
+  import { db } from "./firebase.js";
+  import {
+    collection, onSnapshot, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* ─────────────────────────────────────────
-   STATE
-───────────────────────────────────────── */
-let allProducts   = [];
-let categories    = [];
-let cart          = JSON.parse(localStorage.getItem("sk_cart") || "[]");
-let activeCategory = "all";
-let searchQuery    = "";
+  /* ── State ── */
+  let allProducts   = [];
+  let cart          = JSON.parse(localStorage.getItem("shiv-cart") || "[]");
+  let activeFilter  = "all";
+  let checkoutOpen  = false;
 
-const STORE_WHATSAPP = "919162913553"; // ← Change to your WhatsApp number
-
-/* ─────────────────────────────────────────
-   DOM REFS
-───────────────────────────────────────── */
-const $ = (id) => document.getElementById(id);
-const productsGrid  = $("productsGrid");
-const productsLoader= $("productsLoader");
-const categoryBtns  = $("categoryBtns");
-const cartOverlay   = $("cartOverlay");
-const cartDrawer    = $("cartDrawer");
-const cartItemsEl   = $("cartItems");
-const cartEmptyEl   = $("cartEmpty");
-const cartFooterEl  = $("cartFooter");
-const cartBadge     = $("cartBadge");
-const cartTotalAmt  = $("cartTotalAmt");
-const checkoutModal = $("checkoutModal");
-const orderSummary  = $("orderSummary");
-const orderTotal    = $("orderTotal");
-const searchInput   = $("searchInput");
-const productsHeading= $("productsHeading");
-const productCount  = $("productCount");
-
-/* ─────────────────────────────────────────
-   FIREBASE LISTENERS
-───────────────────────────────────────── */
-function initFirebase() {
-  // Listen for products
-  const pQuery = query(collection(db, "products"), orderBy("name"));
-  onSnapshot(pQuery, (snap) => {
-    allProducts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  /* ── Firestore: real-time listener ── */
+  const q = query(collection(db, "products"), orderBy("name"));
+  onSnapshot(q, (snap) => {
+    allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    buildFilterBar();
     renderProducts();
   }, (err) => {
-    console.error("Products error:", err);
-    productsGrid.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Could not load products. Check Firebase config.</p></div>`;
+    console.error("Firestore error:", err);
+    document.getElementById("products-container").innerHTML =
+      `<p class="loading" style="color:#e53935;">Failed to load products. Check Firebase config.</p>`;
   });
 
-  // Listen for categories
-  onSnapshot(collection(db, "categories"), (snap) => {
-    categories = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    renderCategoryBtns();
-  });
-}
-
-/* ─────────────────────────────────────────
-   RENDER CATEGORIES
-───────────────────────────────────────── */
-function renderCategoryBtns() {
-  // keep "All" button, rebuild the rest
-  const allBtn = categoryBtns.querySelector('[data-cat="all"]');
-  categoryBtns.innerHTML = "";
-  categoryBtns.appendChild(allBtn);
-  categories.forEach((cat) => {
-    const btn = document.createElement("button");
-    btn.className = "cat-btn" + (activeCategory === cat.name ? " active" : "");
-    btn.dataset.cat = cat.name;
-    btn.textContent = cat.name;
-    btn.addEventListener("click", () => filterByCategory(cat.name));
-    categoryBtns.appendChild(btn);
-  });
-}
-
-function filterByCategory(cat) {
-  activeCategory = cat;
-  document.querySelectorAll(".cat-btn").forEach((b) => {
-    b.classList.toggle("active", b.dataset.cat === cat);
-  });
-  productsHeading.textContent = cat === "all" ? "All Products" : cat;
-  renderProducts();
-}
-
-/* ─────────────────────────────────────────
-   RENDER PRODUCTS
-───────────────────────────────────────── */
-function renderProducts() {
-  productsLoader.style.display = "none";
-
-  let filtered = [...allProducts];
-
-  // Category filter
-  if (activeCategory !== "all") {
-    filtered = filtered.filter((p) => p.category === activeCategory);
-  }
-  // Search filter
-  if (searchQuery.trim()) {
-    const q = searchQuery.toLowerCase();
-    filtered = filtered.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        (p.category || "").toLowerCase().includes(q)
-    );
-  }
-
-  productCount.textContent = `${filtered.length} item${filtered.length !== 1 ? "s" : ""}`;
-
-  if (!filtered.length) {
-    productsGrid.innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1;">
-        <div class="empty-icon">🔍</div>
-        <p>No products found${searchQuery ? ` for "${searchQuery}"` : ""}.</p>
-      </div>`;
-    return;
-  }
-
-  productsGrid.innerHTML = filtered.map((p) => buildProductCard(p)).join("");
-
-  // Bind add-to-cart buttons
-  productsGrid.querySelectorAll(".btn-add-cart").forEach((btn) => {
-    btn.addEventListener("click", () => addToCart(btn.dataset.id));
-  });
-  // Bind qty controls (in-card)
-  productsGrid.querySelectorAll(".card-qty-dec").forEach((btn) => {
-    btn.addEventListener("click", () => changeCardQty(btn.dataset.id, -1));
-  });
-  productsGrid.querySelectorAll(".card-qty-inc").forEach((btn) => {
-    btn.addEventListener("click", () => changeCardQty(btn.dataset.id, 1));
-  });
-}
-
-function buildProductCard(p) {
-  const cartItem = cart.find((c) => c.id === p.id);
-  const qty      = cartItem ? cartItem.qty : 0;
-  const outOfStock = Number(p.quantity) === 0;
-  const imgUrl   = p.imageUrl || "https://via.placeholder.com/300x300?text=No+Image";
-
-  return `
-  <div class="product-card" role="listitem" data-id="${p.id}">
-    <div class="product-img-wrap">
-      <img src="${imgUrl}" alt="${escHtml(p.name)}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'" />
-      ${outOfStock ? `<div class="out-of-stock-overlay">Out of Stock</div>` : ""}
-    </div>
-    <div class="product-body">
-      <div class="product-name">${escHtml(p.name)}</div>
-      <div class="product-category">${escHtml(p.category || "General")}</div>
-      <div class="product-price">₹${Number(p.price).toFixed(2)}</div>
-    </div>
-    <div class="product-footer">
-      ${
-        qty > 0
-          ? `<div class="qty-control">
-               <button class="card-qty-dec" data-id="${p.id}" aria-label="Decrease">−</button>
-               <span class="qty-num">${qty}</span>
-               <button class="card-qty-inc" data-id="${p.id}" aria-label="Increase">+</button>
-             </div>`
-          : `<button class="btn-add-cart" data-id="${p.id}" ${outOfStock ? "disabled" : ""}>
-               ${outOfStock ? "Out of Stock" : "+ Add"}
-             </button>`
-      }
-    </div>
-  </div>`;
-}
-
-/* ─────────────────────────────────────────
-   CART LOGIC
-───────────────────────────────────────── */
-function addToCart(productId) {
-  const product = allProducts.find((p) => p.id === productId);
-  if (!product) return;
-  if (Number(product.quantity) === 0) { showToast("Item is out of stock", "error"); return; }
-
-  const existing = cart.find((c) => c.id === productId);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({
-      id:    product.id,
-      name:  product.name,
-      price: Number(product.price),
-      imageUrl: product.imageUrl || "",
-      qty:   1,
+  /* ── Build category filter buttons ── */
+  function buildFilterBar() {
+    const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
+    const bar  = document.getElementById("filter-bar");
+    bar.innerHTML = `<button class="filter-btn ${activeFilter==='all'?'active':''}"
+        data-cat="all" onclick="filterCategory('all',this)">All</button>`;
+    cats.forEach(cat => {
+      const active = activeFilter === cat ? "active" : "";
+      bar.innerHTML += `<button class="filter-btn ${active}"
+          data-cat="${cat}" onclick="filterCategory('${cat}',this)">${cat}</button>`;
     });
   }
-  saveCart();
-  renderProducts();
-  updateCartUI();
-  showToast(`${product.name} added to cart ✓`, "success");
-}
 
-function changeCardQty(productId, delta) {
-  const item = cart.find((c) => c.id === productId);
-  if (!item) return;
-  item.qty += delta;
-  if (item.qty <= 0) cart = cart.filter((c) => c.id !== productId);
-  saveCart();
-  renderProducts();
-  updateCartUI();
-}
+  /* ── Render product grid (grouped by category) ── */
+  function renderProducts() {
+    const container = document.getElementById("products-container");
+    let filtered = activeFilter === "all"
+      ? allProducts
+      : allProducts.filter(p => p.category === activeFilter);
 
-function saveCart() {
-  localStorage.setItem("sk_cart", JSON.stringify(cart));
-}
+    if (filtered.length === 0) {
+      container.innerHTML = `<p class="loading">No products found.</p>`;
+      return;
+    }
 
-function getCartTotal() {
-  return cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-}
+    // Group by category
+    const groups = {};
+    filtered.forEach(p => {
+      const key = p.category || "Other";
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(p);
+    });
 
-function updateCartUI() {
-  const totalItems = cart.reduce((s, i) => s + i.qty, 0);
+    let html = "";
+    Object.keys(groups).sort().forEach(cat => {
+      html += `<h2 class="section-title">🟢 ${cat}</h2>
+               <div class="product-grid">`;
+      groups[cat].forEach(p => {
+        const inStock  = p.quantity > 0;
+        const imgSrc   = p.imageUrl || "https://via.placeholder.com/300x200?text=No+Image";
+        const priceStr = `₹${Number(p.price).toFixed(2)}`;
+        html += `
+          <div class="product-card">
+            <img src="${imgSrc}" alt="${p.name}" loading="lazy"
+                 onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'"/>
+            <div class="card-body">
+              <div class="card-cat">${p.category || ""}</div>
+              <div class="card-name">${p.name}</div>
+              <div class="card-price">${priceStr}</div>
+              ${inStock
+                ? `<button class="add-btn" onclick="addToCart('${p.id}')">+ Add to Cart</button>`
+                : `<div class="out-of-stock">Out of Stock</div>`
+              }
+            </div>
+          </div>`;
+      });
+      html += `</div>`;
+    });
 
-  // Badge
-  if (totalItems > 0) {
-    cartBadge.textContent = totalItems;
-    cartBadge.classList.remove("hidden");
-  } else {
-    cartBadge.classList.add("hidden");
+    container.innerHTML = html;
   }
 
-  // Cart drawer items
-  if (cart.length === 0) {
-    cartEmptyEl.style.display = "flex";
-    cartFooterEl.style.display = "none";
-    cartItemsEl.innerHTML = "";
-    cartItemsEl.appendChild(cartEmptyEl);
-    return;
+  /* ── Category filter ── */
+  window.filterCategory = function(cat, btn) {
+    activeFilter = cat;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderProducts();
+  };
+
+  /* ── Cart helpers ── */
+  function saveCart() { localStorage.setItem("shiv-cart", JSON.stringify(cart)); }
+
+  function updateCartCount() {
+    const total = cart.reduce((sum, i) => sum + i.qty, 0);
+    document.getElementById("cart-count").textContent = total;
   }
 
-  cartEmptyEl.style.display = "none";
-  cartFooterEl.style.display = "block";
-  cartTotalAmt.textContent   = `₹${getCartTotal().toFixed(2)}`;
+  window.addToCart = function(id) {
+    const product = allProducts.find(p => p.id === id);
+    if (!product) return;
+    const existing = cart.find(i => i.id === id);
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ id, name: product.name, price: product.price,
+                  imageUrl: product.imageUrl || "", qty: 1 });
+    }
+    saveCart();
+    updateCartCount();
+    renderCart();
+  };
 
-  const fragment = document.createDocumentFragment();
-  cart.forEach((item) => {
-    const el = document.createElement("div");
-    el.className = "cart-item";
-    el.role = "listitem";
-    el.innerHTML = `
-      <img src="${item.imageUrl || 'https://via.placeholder.com/56x56?text=🛒'}"
-           alt="${escHtml(item.name)}"
-           onerror="this.src='https://via.placeholder.com/56x56?text=🛒'" />
-      <div class="cart-item-info">
-        <div class="cart-item-name">${escHtml(item.name)}</div>
-        <div class="cart-item-price">₹${item.price.toFixed(2)} × ${item.qty} = ₹${(item.price * item.qty).toFixed(2)}</div>
-      </div>
-      <div class="cart-item-qty">
-        <button class="remove-btn" data-id="${item.id}" aria-label="Remove one">−</button>
-        <span>${item.qty}</span>
-        <button data-id="${item.id}" class="inc-btn" aria-label="Add one">+</button>
-      </div>`;
-    fragment.appendChild(el);
-  });
+  window.changeQty = function(id, delta) {
+    const item = cart.find(i => i.id === id);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+    saveCart(); updateCartCount(); renderCart();
+  };
 
-  cartItemsEl.innerHTML = "";
-  cartItemsEl.appendChild(fragment);
+  window.removeItem = function(id) {
+    cart = cart.filter(i => i.id !== id);
+    saveCart(); updateCartCount(); renderCart();
+  };
 
-  // Bind cart item buttons
-  cartItemsEl.querySelectorAll(".remove-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const item = cart.find((c) => c.id === btn.dataset.id);
-      if (item) { item.qty -= 1; if (item.qty <= 0) cart = cart.filter((c) => c.id !== btn.dataset.id); }
-      saveCart(); renderProducts(); updateCartUI();
+  /* ── Render cart sidebar ── */
+  function renderCart() {
+    const container = document.getElementById("cart-items");
+    if (cart.length === 0) {
+      container.innerHTML = `<p class="empty-cart">Your cart is empty</p>`;
+      document.getElementById("cart-total").textContent = "₹0";
+      return;
+    }
+
+    let total = 0;
+    let html  = "";
+    cart.forEach(item => {
+      const subtotal = item.price * item.qty;
+      total += subtotal;
+      const imgSrc = item.imageUrl || "https://via.placeholder.com/50?text=?";
+      html += `
+        <div class="cart-item">
+          <img src="${imgSrc}" alt="${item.name}"
+               onerror="this.src='https://via.placeholder.com/50?text=?'"/>
+          <div class="cart-item-info">
+            <div class="name">${item.name}</div>
+            <div class="price">₹${Number(item.price).toFixed(2)} × ${item.qty} = ₹${subtotal.toFixed(2)}</div>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+          </div>
+          <button class="remove-btn" onclick="removeItem('${item.id}')" title="Remove">🗑</button>
+        </div>`;
     });
-  });
-  cartItemsEl.querySelectorAll(".inc-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const item = cart.find((c) => c.id === btn.dataset.id);
-      if (item) item.qty += 1;
-      saveCart(); renderProducts(); updateCartUI();
+
+    container.innerHTML = html;
+    document.getElementById("cart-total").textContent = `₹${total.toFixed(2)}`;
+  }
+
+  /* ── Cart open / close ── */
+  window.openCart = function() {
+    document.getElementById("cart-sidebar").classList.add("open");
+    document.getElementById("cart-overlay").classList.add("open");
+    renderCart();
+  };
+  window.closeCart = function() {
+    document.getElementById("cart-sidebar").classList.remove("open");
+    document.getElementById("cart-overlay").classList.remove("open");
+    // reset checkout state
+    checkoutOpen = false;
+    document.getElementById("checkout-form").style.display = "none";
+    document.getElementById("checkout-btn").style.display  = "block";
+    document.getElementById("whatsapp-btn").style.display  = "none";
+  };
+
+  /* ── Checkout ── */
+  window.showCheckout = function() {
+    if (cart.length === 0) { alert("Your cart is empty!"); return; }
+    checkoutOpen = true;
+    document.getElementById("checkout-form").style.display = "flex";
+    document.getElementById("checkout-form").style.flexDirection = "column";
+    document.getElementById("checkout-btn").style.display  = "none";
+    document.getElementById("whatsapp-btn").style.display  = "block";
+  };
+
+  window.sendWhatsApp = function() {
+    const name    = document.getElementById("cust-name").value.trim();
+    const phone   = document.getElementById("cust-phone").value.trim();
+    const address = document.getElementById("cust-address").value.trim();
+
+    if (!name || !phone || !address) {
+      alert("Please fill in all fields (Name, Phone, Address)."); return;
+    }
+    if (cart.length === 0) { alert("Cart is empty!"); return; }
+
+    let msg = `🛒 *New Order — Shiv Kirana*\n\n`;
+    msg += `👤 *Name:* ${name}\n`;
+    msg += `📞 *Phone:* ${phone}\n`;
+    msg += `📍 *Address:* ${address}\n\n`;
+    msg += `*Order Details:*\n`;
+
+    let total = 0;
+    cart.forEach(item => {
+      const sub = item.price * item.qty;
+      total += sub;
+      msg += `• ${item.name} × ${item.qty} = ₹${sub.toFixed(2)}\n`;
     });
-  });
-}
+    msg += `\n💰 *Total: ₹${total.toFixed(2)}*`;
 
-/* ─────────────────────────────────────────
-   CART DRAWER OPEN/CLOSE
-───────────────────────────────────────── */
-function openCart() {
-  cartDrawer.classList.add("open");
-  cartOverlay.classList.add("open");
-  document.body.style.overflow = "hidden";
-  $("cartBtn").setAttribute("aria-expanded", "true");
-}
-function closeCart() {
-  cartDrawer.classList.remove("open");
-  cartOverlay.classList.remove("open");
-  document.body.style.overflow = "";
-  $("cartBtn").setAttribute("aria-expanded", "false");
-}
+    // Replace with store's WhatsApp number (with country code, no +)
+    const storePhone = "919162913553";
+    const url = `https://wa.me/${storePhone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
+  };
 
-$("cartBtn").addEventListener("click", openCart);
-$("closeCartBtn").addEventListener("click", closeCart);
-cartOverlay.addEventListener("click", closeCart);
-
-/* ─────────────────────────────────────────
-   CHECKOUT
-───────────────────────────────────────── */
-$("checkoutBtn").addEventListener("click", () => {
-  if (cart.length === 0) return;
-  // Populate summary
-  orderSummary.innerHTML = cart.map((i) =>
-    `<div style="display:flex;justify-content:space-between;font-size:0.88rem;padding:3px 0;">
-       <span>${escHtml(i.name)} × ${i.qty}</span>
-       <span style="font-weight:700;">₹${(i.price * i.qty).toFixed(2)}</span>
-     </div>`
-  ).join("");
-  orderTotal.textContent = `₹${getCartTotal().toFixed(2)}`;
-  checkoutModal.classList.add("open");
-  closeCart();
-});
-
-$("cancelCheckout").addEventListener("click", () => {
-  checkoutModal.classList.remove("open");
-});
-checkoutModal.addEventListener("click", (e) => {
-  if (e.target === checkoutModal) checkoutModal.classList.remove("open");
-});
-
-$("sendWhatsapp").addEventListener("click", () => {
-  const name    = $("custName").value.trim();
-  const phone   = $("custPhone").value.trim();
-  const address = $("custAddress").value.trim();
-
-  if (!name)    { showToast("Please enter your name", "error"); return; }
-  if (!phone || phone.length < 10) { showToast("Please enter a valid 10-digit phone number", "error"); return; }
-  if (!address) { showToast("Please enter a delivery address", "error"); return; }
-
-  const itemsText = cart.map((i) =>
-    `• ${i.name} × ${i.qty} = ₹${(i.price * i.qty).toFixed(2)}`
-  ).join("\n");
-
-  const message =
-    `🛒 *New Order — Shiv Kirana*\n\n` +
-    `👤 *Name:* ${name}\n` +
-    `📞 *Phone:* ${phone}\n` +
-    `📍 *Address:* ${address}\n\n` +
-    `📦 *Order Items:*\n${itemsText}\n\n` +
-    `💰 *Total: ₹${getCartTotal().toFixed(2)}*\n\n` +
-    `_Order placed via ShivKirana.com_`;
-
-  const waUrl = `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(message)}`;
-  window.open(waUrl, "_blank", "noopener,noreferrer");
-
-  // Clear cart after order
-  cart = [];
-  saveCart();
-  renderProducts();
-  updateCartUI();
-  checkoutModal.classList.remove("open");
-  $("custName").value = $("custPhone").value = $("custAddress").value = "";
-  showToast("Order sent via WhatsApp! 🎉", "success");
-});
-
-/* ─────────────────────────────────────────
-   SEARCH
-───────────────────────────────────────── */
-searchInput.addEventListener("input", (e) => {
-  searchQuery = e.target.value;
-  renderProducts();
-});
-
-/* ─────────────────────────────────────────
-   CATEGORY ALL BTN
-───────────────────────────────────────── */
-categoryBtns.querySelector('[data-cat="all"]').addEventListener("click", () => {
-  filterByCategory("all");
-});
-
-/* ─────────────────────────────────────────
-   CHATBOT
-───────────────────────────────────────── */
-const chatbotTrigger = $("chatbotTrigger");
-const chatbotWindow  = $("chatbotWindow");
-const chatMessages   = $("chatMessages");
-
-const chatReplies = {
-  products:  "🛒 Browse all our fresh products right here on the page! Use the category buttons or search bar to find what you need.",
-  order:     "📦 To place an order: add items to your cart, click checkout, fill your details and send via WhatsApp. We'll confirm your order shortly!",
-  delivery:  "🚚 We deliver within 5 km of our store. Delivery time is usually 30–60 minutes. Minimum order: ₹200. Delivery is FREE above ₹500!",
-  contact:   "📞 Call us: +91 98765 43210\n🕐 Hours: Mon–Sat 7AM–9PM, Sun 8AM–1PM\n📍 Shop No. 12, Rajendra Nagar Main Road, Patna",
-};
-
-chatbotTrigger.addEventListener("click", () => {
-  const isOpen = chatbotWindow.classList.toggle("open");
-  chatbotTrigger.setAttribute("aria-expanded", isOpen);
-  chatbotTrigger.textContent = isOpen ? "✕" : "💬";
-});
-
-document.querySelectorAll(".chat-option-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const key = btn.dataset.reply;
-
-    // User message
-    const userMsg = document.createElement("div");
-    userMsg.className = "chat-msg user";
-    userMsg.textContent = btn.textContent;
-    chatMessages.appendChild(userMsg);
-
-    // Bot reply (with slight delay for naturalness)
-    setTimeout(() => {
-      const botMsg = document.createElement("div");
-      botMsg.className = "chat-msg bot";
-      botMsg.style.whiteSpace = "pre-line";
-      botMsg.textContent = chatReplies[key] || "I'm not sure about that. Please call us for help!";
-      chatMessages.appendChild(botMsg);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }, 400);
-
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  });
-});
-
-/* ─────────────────────────────────────────
-   TOAST
-───────────────────────────────────────── */
-function showToast(msg, type = "") {
-  const container = $("toastContainer");
-  const toast = document.createElement("div");
-  toast.className = `toast ${type}`;
-  toast.textContent = msg;
-  container.appendChild(toast);
-  setTimeout(() => toast.remove(), 2900);
-}
-
-/* ─────────────────────────────────────────
-   HELPERS
-───────────────────────────────────────── */
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-/* ─────────────────────────────────────────
-   INIT
-───────────────────────────────────────── */
-updateCartUI();
-initFirebase();
+  /* ── Init ── */
+  updateCartCount();
+  renderCart();
 </script>
+
 </body>
 </html>
