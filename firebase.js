@@ -2,7 +2,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 🔧 REPLACE these values with your Firebase project config
+// 🔧 REPLACE with your actual Firebase project config
+// Get from: https://console.firebase.google.com → Project Settings → Your Apps
 const firebaseConfig = {
   apiKey: "AIzaSyAzYesdT-95K86IbvyUCPDy0BvGJBtn7Jk",
   authDomain: "shivkirana-bcd14.firebaseapp.com",
