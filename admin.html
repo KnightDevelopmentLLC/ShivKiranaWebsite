@@ -1,377 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Preconnect to Firebase servers for faster loading -->
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-
-  <!-- EDIT HERE - CHANGE STORE NAME (browser tab) -->
-  <title>Admin — Shiv Kirana</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <title>Admin</title>
 </head>
 <body>
 
-<!-- ══════════════════════════ HEADER ══════════════════════════ -->
-<header>
-  <div class="header-logo">
-    <div class="logo-icon">⚙️</div>
-    <div>
-      <!-- EDIT HERE - CHANGE STORE NAME -->
-      <h1>Shiv Kirana</h1>
-      <span>Admin Panel</span>
-    </div>
-  </div>
-  <a href="index.html" style="color:#fff;font-size:13px;font-weight:700;opacity:0.85;">
-    ← View Store
-  </a>
-</header>
+<h2>Add Product</h2>
 
-<!-- ══════════════════════════ ADMIN WRAPPER ═══════════════════ -->
-<div class="admin-wrapper">
-  <div class="admin-title">📦 Product Management</div>
+<input id="name" placeholder="Name">
+<input id="category" placeholder="Category">
+<input id="price" type="number" placeholder="Price">
+<input id="qty" type="number" placeholder="Qty">
+<input id="image" placeholder="Image URL">
 
-  <!-- ══ ADD PRODUCT FORM ═══════════════════════════════════════ -->
-  <div class="card-panel">
-    <h2>➕ Add New Product</h2>
+<button onclick="addProduct()">Add</button>
 
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Product Name *</label>
-        <input type="text" id="pName" placeholder="e.g. Basmati Rice" />
-      </div>
+<div id="list"></div>
 
-      <div class="form-group">
-        <!-- EDIT HERE - ADD OR REMOVE CATEGORY OPTIONS -->
-        <label>Category *</label>
-        <select id="pCategory">
-          <option value="">Select Category</option>
-          <option>Grains &amp; Rice</option>
-          <option>Pulses &amp; Dal</option>
-          <option>Spices</option>
-          <option>Oil &amp; Ghee</option>
-          <option>Dairy</option>
-          <option>Snacks</option>
-          <option>Beverages</option>
-          <option>Cleaning</option>
-          <option>Other</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Price (₹) *</label>
-        <input type="number" id="pPrice" placeholder="0.00" min="0" step="0.01" />
-      </div>
-
-      <div class="form-group">
-        <label>Quantity in Stock *</label>
-        <input type="number" id="pQuantity" placeholder="0" min="0" />
-      </div>
-
-      <div class="form-group full">
-        <label>Image URL (Cloudinary or any direct image link)</label>
-        <input type="url" id="pImageUrl" placeholder="https://res.cloudinary.com/..." />
-      </div>
-    </div>
-
-    <button class="btn-primary" onclick="addProduct()">Add Product</button>
-    <div class="msg" id="addMsg"></div>
-  </div>
-
-  <!-- ══ PRODUCT LIST TABLE ══════════════════════════════════════ -->
-  <div class="card-panel">
-    <h2>📋 All Products <span id="productCount" style="font-size:13px;color:#999;font-weight:600"></span></h2>
-
-    <div class="loading" id="adminLoading">
-      <div class="spinner"></div>
-      Loading products…
-    </div>
-
-    <div style="overflow-x:auto">
-      <table class="admin-table" id="productTable" style="display:none">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="productTableBody"></tbody>
-      </table>
-    </div>
-
-    <div class="empty-state" id="adminEmptyState" style="display:none">
-      <div class="icon">📦</div>
-      <p>No products yet. Add your first product above.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════ EDIT MODAL ══════════════════════ -->
-<div class="edit-modal-bg" id="editModalBg">
-  <div class="edit-modal">
-    <h2>✏️ Edit Product</h2>
-    <input type="hidden" id="editId" />
-
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Product Name *</label>
-        <input type="text" id="editName" placeholder="Product Name" />
-      </div>
-
-      <div class="form-group">
-        <!-- EDIT HERE - KEEP SAME CATEGORIES AS ADD FORM ABOVE -->
-        <label>Category *</label>
-        <select id="editCategory">
-          <option value="">Select Category</option>
-          <option>Grains &amp; Rice</option>
-          <option>Pulses &amp; Dal</option>
-          <option>Spices</option>
-          <option>Oil &amp; Ghee</option>
-          <option>Dairy</option>
-          <option>Snacks</option>
-          <option>Beverages</option>
-          <option>Cleaning</option>
-          <option>Other</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Price (₹) *</label>
-        <input type="number" id="editPrice" min="0" step="0.01" />
-      </div>
-
-      <div class="form-group">
-        <label>Quantity in Stock *</label>
-        <input type="number" id="editQuantity" min="0" />
-      </div>
-
-      <div class="form-group full">
-        <label>Image URL</label>
-        <input type="url" id="editImageUrl" placeholder="https://..." />
-      </div>
-    </div>
-
-    <div class="msg" id="editMsg"></div>
-
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
-      <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════ SCRIPT ════════════════════════════ -->
 <script type="module">
-  import { db } from "./firebase.js";
-  import {
-    collection,
-    onSnapshot,
-    addDoc,
-    updateDoc,
-    deleteDoc,
-    doc,
-    query,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { db } from "./firebase.js";
+import { collection, addDoc, deleteDoc, doc, onSnapshot } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  let allProducts = [];
+onSnapshot(collection(db,"products"), snap=>{
+  document.getElementById("list").innerHTML = snap.docs.map(d=>{
+    let p = d.data();
+    return `
+      <div>
+        ${p.name} ₹${p.price}
+        <button onclick="del('${d.id}')">Delete</button>
+      </div>
+    `;
+  }).join("");
+});
 
-  // ── Live product listener (NO orderBy — fixes reload bug) ────
-  try {
-    const q = query(collection(db, "products"));   // ← NO orderBy
-
-    onSnapshot(q,
-      (snapshot) => {
-        // Sort client-side by name
-        allProducts = snapshot.docs
-          .map(d => ({ id: d.id, ...d.data() }))
-          .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-
-        const count = allProducts.length;
-        document.getElementById("adminLoading").style.display    = "none";
-        document.getElementById("productCount").textContent      = `(${count})`;
-        document.getElementById("productTable").style.display    = count ? "table" : "none";
-        document.getElementById("adminEmptyState").style.display = count ? "none"  : "block";
-        renderTable();
-      },
-      (err) => {
-        console.error("Firestore error:", err);
-        document.getElementById("adminLoading").innerHTML =
-          `⚠️ Failed to load: ${err.message}`;
-      }
-    );
-  } catch (err) {
-    console.error("Firebase init error:", err);
-    document.getElementById("adminLoading").innerHTML =
-      "⚠️ Could not connect to database.";
-  }
-
-  // ── Render admin table ───────────────────────────────────
-  function renderTable() {
-    const tbody = document.getElementById("productTableBody");
-    tbody.innerHTML = allProducts.map(p => {
-      const inStock = Number(p.quantity) > 0;
-      const imgSrc  = p.imageUrl || "https://placehold.co/80?text=?";
-      // Escape single quotes in name to avoid breaking onclick
-      const safeName = (p.name || "").replace(/'/g, "\\'");
-      return `
-        <tr>
-          <td>
-            <img src="${imgSrc}"
-                 onerror="this.src='https://placehold.co/80?text=?'"
-                 alt="${p.name}" />
-          </td>
-          <td><strong>${p.name}</strong></td>
-          <td>${p.category || "—"}</td>
-          <td>₹${Number(p.price).toFixed(2)}</td>
-          <td>
-            <span class="stock-badge ${inStock ? "in" : "out"}">
-              ${inStock ? `${p.quantity} in stock` : "Out of Stock"}
-            </span>
-          </td>
-          <td style="display:flex;gap:8px;align-items:center;padding-top:14px">
-            <button class="btn-edit"   onclick="openEditModal('${p.id}')">Edit</button>
-            <button class="btn-danger" onclick="deleteProduct('${p.id}','${safeName}')">Delete</button>
-          </td>
-        </tr>`;
-    }).join("");
-  }
-
-  // ── Add product ──────────────────────────────────────────
-  window.addProduct = async function () {
-    const name     = document.getElementById("pName").value.trim();
-    const category = document.getElementById("pCategory").value;
-    const price    = parseFloat(document.getElementById("pPrice").value);
-    const quantity = parseInt(document.getElementById("pQuantity").value);
-    const imageUrl = document.getElementById("pImageUrl").value.trim();
-    const msgEl    = document.getElementById("addMsg");
-
-    if (!name || !category || isNaN(price) || isNaN(quantity)) {
-      showMsg(msgEl, "⚠️ Please fill all required fields.", "error");
-      return;
-    }
-    if (price < 0 || quantity < 0) {
-      showMsg(msgEl, "⚠️ Price and quantity cannot be negative.", "error");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "products"), {
-        name,
-        category,
-        price,
-        quantity,
-        imageUrl,
-        createdAt: serverTimestamp()
-      });
-
-      showMsg(msgEl, `✅ "${name}" added successfully!`, "success");
-
-      // Clear the form
-      document.getElementById("pName").value     = "";
-      document.getElementById("pPrice").value    = "";
-      document.getElementById("pQuantity").value = "";
-      document.getElementById("pImageUrl").value = "";
-      document.getElementById("pCategory").value = "";
-
-    } catch (err) {
-      console.error("Add error:", err);
-      showMsg(msgEl, `❌ Failed to add: ${err.message}`, "error");
-    }
-  };
-
-  // ── Delete product ───────────────────────────────────────
-  window.deleteProduct = async function (id, name) {
-    if (!confirm(`Delete "${name}"?\nThis cannot be undone.`)) return;
-    try {
-      await deleteDoc(doc(db, "products", id));
-    } catch (err) {
-      console.error("Delete error:", err);
-      alert(`Failed to delete: ${err.message}`);
-    }
-  };
-
-  // ── Open edit modal ──────────────────────────────────────
-  window.openEditModal = function (id) {
-    const p = allProducts.find(x => x.id === id);
-    if (!p) return;
-
-    document.getElementById("editId").value       = id;
-    document.getElementById("editName").value     = p.name     || "";
-    document.getElementById("editCategory").value = p.category || "";
-    document.getElementById("editPrice").value    = p.price    || "";
-    document.getElementById("editQuantity").value = p.quantity ?? 0;
-    document.getElementById("editImageUrl").value = p.imageUrl || "";
-
-    // Hide any old message
-    const msgEl = document.getElementById("editMsg");
-    msgEl.className      = "msg";
-    msgEl.style.display  = "none";
-    msgEl.textContent    = "";
-
-    document.getElementById("editModalBg").classList.add("open");
-  };
-
-  window.closeEditModal = function () {
-    document.getElementById("editModalBg").classList.remove("open");
-  };
-
-  // Close modal when clicking the dark background
-  document.getElementById("editModalBg").addEventListener("click", (e) => {
-    if (e.target === document.getElementById("editModalBg")) {
-      window.closeEditModal();
-    }
+window.addProduct = async ()=>{
+  await addDoc(collection(db,"products"), {
+    name: name.value,
+    category: category.value,
+    price: Number(price.value),
+    quantity: Number(qty.value),
+    image: image.value
   });
+};
 
-  // ── Save edit ────────────────────────────────────────────
-  window.saveEdit = async function () {
-    const id       = document.getElementById("editId").value;
-    const name     = document.getElementById("editName").value.trim();
-    const category = document.getElementById("editCategory").value;
-    const price    = parseFloat(document.getElementById("editPrice").value);
-    const quantity = parseInt(document.getElementById("editQuantity").value);
-    const imageUrl = document.getElementById("editImageUrl").value.trim();
-    const msgEl    = document.getElementById("editMsg");
-
-    if (!name || !category || isNaN(price) || isNaN(quantity)) {
-      showMsg(msgEl, "⚠️ Please fill all required fields.", "error");
-      return;
-    }
-    if (price < 0 || quantity < 0) {
-      showMsg(msgEl, "⚠️ Price and quantity cannot be negative.", "error");
-      return;
-    }
-
-    try {
-      await updateDoc(doc(db, "products", id), {
-        name, category, price, quantity, imageUrl
-      });
-      showMsg(msgEl, "✅ Product updated!", "success");
-      setTimeout(() => window.closeEditModal(), 1200);
-    } catch (err) {
-      console.error("Update error:", err);
-      showMsg(msgEl, `❌ Update failed: ${err.message}`, "error");
-    }
-  };
-
-  // ── Utility: show inline message ─────────────────────────
-  function showMsg(el, text, type) {
-    el.textContent   = text;
-    el.className     = `msg ${type}`;
-    el.style.display = "block";
-    if (type === "success") {
-      setTimeout(() => { el.style.display = "none"; }, 3000);
-    }
-  }
+window.del = async (id)=>{
+  await deleteDoc(doc(db,"products",id));
+};
 </script>
+
 </body>
 </html>
