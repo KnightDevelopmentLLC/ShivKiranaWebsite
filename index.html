@@ -1,361 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Preconnect to Firebase servers for faster loading -->
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-
-  <!-- EDIT HERE - CHANGE STORE NAME (browser tab) -->
-  <title>Shiv Kirana — Fresh Grocery</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <title>Shiv Kirana</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<!-- ══════════════════════════ HEADER ══════════════════════════ -->
-<!-- EDIT HERE - CHANGE STORE NAME and TAGLINE -->
-<header>
-  <div class="header-logo">
-    <div class="logo-icon">🛒</div>
-    <div>
-      <h1>Shiv Kirana</h1>
-      <span>Fresh &amp; Quality Grocery</span>
-    </div>
-  </div>
-  <button class="cart-btn" id="cartToggleBtn" aria-label="Open cart">
-    🛍️ Cart <span class="cart-count" id="cartCount">0</span>
-  </button>
-</header>
+<h1>Shiv Kirana</h1>
 
-<!-- ══════════════════════════ CATEGORY BAR ════════════════════ -->
-<div class="category-bar" id="categoryBar">
-  <button class="cat-btn active" data-cat="All">All</button>
-</div>
+<div id="categories"></div>
+<div id="products"></div>
 
-<!-- ══════════════════════════ MAIN ════════════════════════════ -->
-<main>
-  <div class="loading" id="loadingState">
-    <div class="spinner"></div>
-    Loading products…
-  </div>
-  <div id="productsContainer"></div>
-</main>
+<h2>Cart</h2>
+<div id="cart"></div>
+<h3 id="total"></h3>
 
-<!-- ══════════════════════════ FOOTER ══════════════════════════ -->
-<!-- EDIT HERE - CHANGE ADDRESS AND PHONE -->
-<footer>
-  <strong>🛒 Shiv Kirana</strong>
-  <p>📍 Near Main Chowk, Patna, Bihar — 800001</p>
-  <p>📞 +91 98765 43210</p>
-  <p style="margin-top:8px;font-size:11px;opacity:0.7">© 2025 Shiv Kirana. All rights reserved.</p>
-</footer>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<input id="address" placeholder="Address">
+<button onclick="order()">Order on WhatsApp</button>
 
-<!-- ══════════════════════════ CART OVERLAY ════════════════════ -->
-<div class="cart-overlay" id="cartOverlay"></div>
-
-<!-- ══════════════════════════ CART DRAWER ═════════════════════ -->
-<div class="cart-drawer" id="cartDrawer">
-  <div class="cart-header">
-    🛍️ Your Cart
-    <button class="cart-close" id="cartCloseBtn" aria-label="Close cart">✕</button>
-  </div>
-
-  <div class="cart-items" id="cartItems">
-    <div class="cart-empty-msg">
-      <div class="icon">🛒</div>
-      <p>Your cart is empty</p>
-    </div>
-  </div>
-
-  <div class="cart-footer" id="cartFooter" style="display:none">
-    <div class="cart-total">
-      <span>Total</span>
-      <span id="cartTotal">₹0</span>
-    </div>
-
-    <div class="checkout-form">
-      <input type="text"  id="custName"    placeholder="Your Name *" />
-      <input type="tel"   id="custPhone"   placeholder="Phone Number *" />
-      <textarea           id="custAddress" placeholder="Delivery Address *"></textarea>
-    </div>
-
-    <!-- EDIT HERE - CHANGE WHATSAPP NUMBER (country code + number, no + or spaces) -->
-    <button class="whatsapp-btn" id="whatsappBtn" onclick="sendWhatsApp()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-      </svg>
-      Order via WhatsApp
-    </button>
-  </div>
-</div>
-
-<!-- ══════════════════════════ TOAST ════════════════════════════ -->
-<div class="toast" id="toast"></div>
-
-<!-- ══════════════════════════ SCRIPT ════════════════════════════ -->
 <script type="module">
-  import { db } from "./firebase.js";
-  import {
-    collection,
-    onSnapshot,
-    query
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { db } from "./firebase.js";
+import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  // ══════════════════════════════════════════════════════════
-  // EDIT HERE - CHANGE WHATSAPP NUMBER
-  // Format: country code + number, no + or spaces
-  // Example: India +91 98765 43210 → "919876543210"
-  // ══════════════════════════════════════════════════════════
-  const WHATSAPP_NUMBER = "919876543210";
+let allProducts = [];
+let cart = [];
 
-  // ── State ────────────────────────────────────────────────
-  let allProducts    = [];
-  let cart           = {};
-  let activeCategory = "All";
+onSnapshot(collection(db,"products"), snap=>{
+  allProducts = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderProducts();
+  renderCategories();
+});
 
-  // ── DOM refs ─────────────────────────────────────────────
-  const categoryBar       = document.getElementById("categoryBar");
-  const productsContainer = document.getElementById("productsContainer");
-  const loadingState      = document.getElementById("loadingState");
-  const cartCount         = document.getElementById("cartCount");
-  const cartItemsEl       = document.getElementById("cartItems");
-  const cartFooter        = document.getElementById("cartFooter");
-  const cartTotal         = document.getElementById("cartTotal");
-  const cartDrawer        = document.getElementById("cartDrawer");
-  const cartOverlay       = document.getElementById("cartOverlay");
+function renderCategories(){
+  let cats = ["All", ...new Set(allProducts.map(p=>p.category))];
+  document.getElementById("categories").innerHTML = cats.map(c=>
+    `<button onclick="filter('${c}')">${c}</button>`
+  ).join("");
+}
 
-  // ── Cart open / close ────────────────────────────────────
-  document.getElementById("cartToggleBtn").addEventListener("click", openCart);
-  document.getElementById("cartCloseBtn").addEventListener("click", closeCart);
-  cartOverlay.addEventListener("click", closeCart);
+window.filter = (cat)=>{
+  if(cat==="All") renderProducts();
+  else renderProducts(allProducts.filter(p=>p.category===cat));
+};
 
-  function openCart()  { cartDrawer.classList.add("open");    cartOverlay.classList.add("open"); }
-  function closeCart() { cartDrawer.classList.remove("open"); cartOverlay.classList.remove("open"); }
+function renderProducts(list=allProducts){
+  document.getElementById("products").innerHTML = list.map(p=>`
+    <div class="card">
+      <img src="${p.image}">
+      <h3>${p.name}</h3>
+      <p>₹${p.price}</p>
+      <button onclick='add(${JSON.stringify(p)})'>Add</button>
+    </div>
+  `).join("");
+}
 
-  // ── Firebase: live listener (NO orderBy — fixes reload bug) ──
-  try {
-    const q = query(collection(db, "products"));   // ← NO orderBy here
+window.add = (p)=>{
+  let item = cart.find(i=>i.id===p.id);
+  if(item) item.qty++;
+  else cart.push({...p, qty:1});
+  renderCart();
+};
 
-    onSnapshot(q,
-      (snapshot) => {
-        // Sort client-side by name instead
-        allProducts = snapshot.docs
-          .map(d => ({ id: d.id, ...d.data() }))
-          .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+function renderCart(){
+  let total = 0;
+  document.getElementById("cart").innerHTML = cart.map(c=>{
+    total += c.price*c.qty;
+    return `<p>${c.name} x ${c.qty}</p>`;
+  }).join("");
+  document.getElementById("total").innerText = "Total: ₹"+total;
+}
 
-        loadingState.style.display = "none";
-        renderCategories();
-        renderProducts();
-      },
-      (err) => {
-        // Firestore returned an error
-        console.error("Firestore error:", err);
-        loadingState.innerHTML = `
-          <div class="icon">⚠️</div>
-          <p>Failed to load products.<br>
-          <small style="color:#999">${err.message}</small></p>`;
-      }
-    );
-  } catch (err) {
-    console.error("Firebase init error:", err);
-    loadingState.innerHTML = `<div class="icon">⚠️</div><p>Could not connect to database.</p>`;
-  }
-
-  // ── Render category filter buttons ───────────────────────
-  function renderCategories() {
-    const cats = ["All", ...new Set(
-      allProducts.map(p => p.category).filter(Boolean)
-    )];
-
-    categoryBar.innerHTML = cats.map(c =>
-      `<button class="cat-btn${c === activeCategory ? " active" : ""}" data-cat="${c}">${c}</button>`
-    ).join("");
-
-    categoryBar.querySelectorAll(".cat-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        activeCategory = btn.dataset.cat;
-        renderCategories();
-        renderProducts();
-      });
-    });
-  }
-
-  // ── Render product grid grouped by category ──────────────
-  function renderProducts() {
-    const filtered = activeCategory === "All"
-      ? allProducts
-      : allProducts.filter(p => p.category === activeCategory);
-
-    if (!filtered.length) {
-      productsContainer.innerHTML = `
-        <div class="empty-state">
-          <div class="icon">🛒</div>
-          <p>No products found.</p>
-        </div>`;
-      return;
-    }
-
-    // Group by category
-    const grouped = {};
-    filtered.forEach(p => {
-      const cat = p.category || "Other";
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(p);
-    });
-
-    productsContainer.innerHTML = Object.entries(grouped).map(([cat, products]) => `
-      <div>
-        <div class="section-title">${cat}</div>
-        <div class="products-grid">
-          ${products.map(p => productCardHTML(p)).join("")}
-        </div>
-      </div>
-    `).join("");
-
-    // Attach events after rendering
-    productsContainer.querySelectorAll(".add-btn").forEach(btn => {
-      btn.addEventListener("click", () => addToCart(btn.dataset.id));
-    });
-    productsContainer.querySelectorAll(".qty-inc").forEach(btn => {
-      btn.addEventListener("click", () => changeQty(btn.dataset.id, 1));
-    });
-    productsContainer.querySelectorAll(".qty-dec").forEach(btn => {
-      btn.addEventListener("click", () => changeQty(btn.dataset.id, -1));
-    });
-  }
-
-  // ── Single product card HTML ─────────────────────────────
-  function productCardHTML(p) {
-    const inStock = Number(p.quantity) > 0;
-    const inCart  = cart[p.id];
-    const imgSrc  = p.imageUrl || "https://placehold.co/300x200?text=No+Image";
-
-    return `
-      <div class="product-card">
-        <img src="${imgSrc}" alt="${p.name}" loading="lazy"
-             onerror="this.src='https://placehold.co/300x200?text=No+Image'" />
-        <div class="card-body">
-          <div class="card-name">${p.name}</div>
-          <div class="card-cat">${p.category || ""}</div>
-          <div class="card-price">₹${Number(p.price).toFixed(2)}</div>
-          ${!inStock ? `<div class="out-of-stock">Out of Stock</div>` : ""}
-          ${inStock
-            ? inCart
-              ? `<div class="qty-control">
-                   <button class="qty-dec" data-id="${p.id}">−</button>
-                   <span>${inCart.qty}</span>
-                   <button class="qty-inc" data-id="${p.id}">+</button>
-                 </div>`
-              : `<button class="add-btn" data-id="${p.id}">Add to Cart</button>`
-            : `<button class="add-btn" disabled>Out of Stock</button>`
-          }
-        </div>
-      </div>`;
-  }
-
-  // ── Cart: add ────────────────────────────────────────────
-  function addToCart(id) {
-    const product = allProducts.find(p => p.id === id);
-    if (!product) return;
-    cart[id] = { ...product, qty: 1 };
-    updateCartUI();
-    showToast(`${product.name} added to cart ✓`);
-  }
-
-  // ── Cart: change qty ─────────────────────────────────────
-  function changeQty(id, delta) {
-    if (!cart[id]) return;
-    cart[id].qty += delta;
-    if (cart[id].qty <= 0) delete cart[id];
-    updateCartUI();
-    renderProducts();
-  }
-
-  // ── Cart: rebuild UI ─────────────────────────────────────
-  function updateCartUI() {
-    const items = Object.values(cart);
-    const count = items.reduce((s, i) => s + i.qty, 0);
-    const total = items.reduce((s, i) => s + i.qty * Number(i.price), 0);
-
-    cartCount.textContent = count;
-
-    if (!items.length) {
-      cartItemsEl.innerHTML = `
-        <div class="cart-empty-msg">
-          <div class="icon">🛒</div>
-          <p>Your cart is empty</p>
-        </div>`;
-      cartFooter.style.display = "none";
-    } else {
-      cartItemsEl.innerHTML = items.map(item => `
-        <div class="cart-item">
-          <img src="${item.imageUrl || "https://placehold.co/80?text=?"}"
-               onerror="this.src='https://placehold.co/80?text=?'" alt="${item.name}" />
-          <div class="cart-item-info">
-            <div class="cart-item-name">${item.name}</div>
-            <div class="cart-item-price">₹${(Number(item.price) * item.qty).toFixed(2)}</div>
-            <div class="cart-item-qty">
-              <button onclick="cartQty('${item.id}', -1)">−</button>
-              <span>${item.qty}</span>
-              <button onclick="cartQty('${item.id}', 1)">+</button>
-            </div>
-          </div>
-          <button class="remove-btn" onclick="removeItem('${item.id}')" title="Remove">✕</button>
-        </div>
-      `).join("");
-      cartFooter.style.display = "block";
-      cartTotal.textContent = `₹${total.toFixed(2)}`;
-    }
-
-    renderProducts();
-  }
-
-  // Expose for inline onclick handlers
-  window.cartQty    = (id, d) => { changeQty(id, d); };
-  window.removeItem = (id)    => { delete cart[id]; updateCartUI(); };
-
-  // ── WhatsApp checkout ────────────────────────────────────
-  window.sendWhatsApp = function () {
-    const name    = document.getElementById("custName").value.trim();
-    const phone   = document.getElementById("custPhone").value.trim();
-    const address = document.getElementById("custAddress").value.trim();
-
-    if (!name || !phone || !address) {
-      showToast("⚠️ Please fill name, phone & address");
-      return;
-    }
-    if (!Object.keys(cart).length) {
-      showToast("⚠️ Your cart is empty!");
-      return;
-    }
-
-    const items = Object.values(cart);
-    const total = items.reduce((s, i) => s + i.qty * Number(i.price), 0);
-
-    let msg = `🛒 *New Order — Shiv Kirana*\n\n`;
-    msg += `*Name:* ${name}\n*Phone:* ${phone}\n*Address:* ${address}\n\n`;
-    msg += `*Items Ordered:*\n`;
-    items.forEach(i => {
-      msg += `• ${i.name} × ${i.qty} = ₹${(Number(i.price) * i.qty).toFixed(2)}\n`;
-    });
-    msg += `\n*Total: ₹${total.toFixed(2)}*`;
-
-    // EDIT HERE - WHATSAPP_NUMBER is set at the top of this script
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
-  };
-
-  // ── Toast notification ───────────────────────────────────
-  function showToast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 2500);
-  }
+window.order = ()=>{
+  let msg = "Order:\n";
+  cart.forEach(c=> msg+=`${c.name} x ${c.qty}\n`);
+  msg += document.getElementById("name").value;
+  window.open("https://wa.me/91XXXXXXXXXX?text="+encodeURIComponent(msg));
+};
 </script>
+
 </body>
 </html>
