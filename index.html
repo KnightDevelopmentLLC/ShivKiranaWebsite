@@ -158,30 +158,50 @@
 // EDIT HERE - PRODUCTS
 // ============================================================
 const products = [
-  { id: 1,  name: "Basmati Rice (5kg)",       price: 349,  category: "Grains",      stock: true,  image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&auto=format&fit=crop" },
-  { id: 2,  name: "Whole Wheat Flour (10kg)", price: 299,  category: "Grains",      stock: true,  image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&auto=format&fit=crop" },
-  { id: 3,  name: "Toor Dal (1kg)",           price: 129,  category: "Pulses",      stock: true,  image: "https://images.unsplash.com/photo-1612257999756-1e2e978bb0c1?w=400&auto=format&fit=crop" },
-  { id: 4,  name: "Chana Dal (1kg)",          price: 109,  category: "Pulses",      stock: true,  image: "https://images.unsplash.com/photo-1515543904379-3d757afe72e4?w=400&auto=format&fit=crop" },
-  { id: 5,  name: "Mustard Oil (1L)",         price: 175,  category: "Oil & Ghee",  stock: true,  image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&auto=format&fit=crop" },
-  { id: 6,  name: "Pure Desi Ghee (500g)",    price: 389,  category: "Oil & Ghee",  stock: true,  image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&auto=format&fit=crop" },
-  { id: 7,  name: "Fresh Tomatoes (1kg)",     price: 35,   category: "Vegetables",  stock: true,  image: "https://images.unsplash.com/photo-1607305387299-a3d9611cd469?w=400&auto=format&fit=crop" },
-  { id: 8,  name: "Onion (2kg)",              price: 55,   category: "Vegetables",  stock: true,  image: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400&auto=format&fit=crop" },
-  { id: 9,  name: "Potato (3kg)",             price: 75,   category: "Vegetables",  stock: true,  image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&auto=format&fit=crop" },
-  { id: 10, name: "Green Chillies (250g)",    price: 20,   category: "Vegetables",  stock: false, image: "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=400&auto=format&fit=crop" },
-  { id: 11, name: "Alphonso Mangoes (6pcs)",  price: 199,  category: "Fruits",      stock: true,  image: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=400&auto=format&fit=crop" },
-  { id: 12, name: "Bananas (1 dozen)",        price: 45,   category: "Fruits",      stock: true,  image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&auto=format&fit=crop" },
-  { id: 13, name: "Apple (1kg)",              price: 160,  category: "Fruits",      stock: true,  image: "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=400&auto=format&fit=crop" },
-  { id: 14, name: "Amul Full Cream Milk (1L)",price: 68,   category: "Dairy",       stock: true,  image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&auto=format&fit=crop" },
-  { id: 15, name: "Paneer (200g)",            price: 89,   category: "Dairy",       stock: true,  image: "https://images.unsplash.com/photo-1631452180775-cb1d57ac1e3b?w=400&auto=format&fit=crop" },
-  { id: 16, name: "Curd (500g)",              price: 45,   category: "Dairy",       stock: true,  image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&auto=format&fit=crop" },
-  { id: 17, name: "Turmeric Powder (200g)",   price: 55,   category: "Spices",      stock: true,  image: "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=400&auto=format&fit=crop" },
-  { id: 18, name: "Cumin Seeds (100g)",       price: 45,   category: "Spices",      stock: true,  image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" },
-  { id: 19, name: "Red Chilli Powder (200g)", price: 60,   category: "Spices",      stock: false, image: "https://images.unsplash.com/photo-1583117361-0d2c2de3c413?w=400&auto=format&fit=crop" },
-  { id: 20, name: "Parle-G Biscuits (800g)",  price: 75,   category: "Snacks",      stock: true,  image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&auto=format&fit=crop" },
-  { id: 21, name: "Haldiram Namkeen (400g)",  price: 99,   category: "Snacks",      stock: true,  image: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&auto=format&fit=crop" },
-  { id: 22, name: "Maggi Noodles (12pk)",     price: 132,  category: "Snacks",      stock: true,  image: "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&auto=format&fit=crop" },
-  { id: 23, name: "Surf Excel (1kg)",         price: 185,  category: "Household",   stock: true,  image: "https://images.unsplash.com/photo-1585687433303-c4a81e2a20aa?w=400&auto=format&fit=crop" },
-  { id: 24, name: "Lifebuoy Soap (4 bars)",   price: 80,   category: "Household",   stock: true,  image: "https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400&auto=format&fit=crop" },
+
+  // 🍪 Biscuits & Snacks
+  { id: 1, name: "Parle Top Rich Butter Crackers", price: 9, category: "Biscuits & Snacks", stock: true, image: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=400" },
+  { id: 2, name: "Parle Top Rich Butter Crackers (Large)", price: 30, category: "Biscuits & Snacks", stock: true, image: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=400" },
+  { id: 3, name: "Parle-G", price: 10, category: "Biscuits & Snacks", stock: true, image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400" },
+  { id: 4, name: "Bourbon Biscuit", price: 10, category: "Biscuits & Snacks", stock: true, image: "https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=400" },
+  { id: 5, name: "Parle Nimkin", price: 9, category: "Biscuits & Snacks", stock: true, image: "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400" },
+  { id: 6, name: "Monaco Biscuit", price: 20, category: "Biscuits & Snacks", stock: true, image: "https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=400" },
+  { id: 7, name: "Good Day Butter Cookies", price: 40, category: "Biscuits & Snacks", stock: true, image: "https://images.unsplash.com/photo-1586985289906-406988974504?w=400" },
+  { id: 8, name: "Parle Rusk", price: 40, category: "Biscuits & Snacks", stock: true, image: "https://images.unsplash.com/photo-1589365278144-c9e705f843ba?w=400" },
+
+  // 🛢️ Atta & Essentials
+  { id: 9, name: "Aashirwad Atta", price: 283, category: "Essentials", stock: true, image: "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400" },
+
+  // 🧴 Hair Oils & Personal Care
+  { id: 10, name: "Dabur Amla Hair Oil (Small)", price: 20, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
+  { id: 11, name: "Dabur Amla Hair Oil (Large)", price: 50, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
+  { id: 12, name: "Parachute Coconut Oil (Small)", price: 68, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400" },
+  { id: 13, name: "Parachute Coconut Oil (Large)", price: 125, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400" },
+  { id: 14, name: "Vatika Coconut Oil", price: 40, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400" },
+  { id: 15, name: "Bajaj Almond Drops", price: 75, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
+  { id: 16, name: "Dabur Almond Oil", price: 33, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
+  { id: 17, name: "Lal Tel (Small)", price: 40, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
+  { id: 18, name: "Lal Tel (Large)", price: 70, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
+  { id: 19, name: "Mustard Oil", price: 55, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1604908176997-431f3c41c5e5?w=400" },
+  { id: 20, name: "Small Hair Oil (Local)", price: 10, category: "Hair Oil", stock: true, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=400" },
+
+  // 🧼 Hygiene & Cleaning
+  { id: 21, name: "Harpic Toilet Cleaner (Small)", price: 46, category: "Cleaning", stock: true, image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400" },
+  { id: 22, name: "Harpic Toilet Cleaner (Large)", price: 110, category: "Cleaning", stock: true, image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400" },
+  { id: 23, name: "Savlon Handwash Refill", price: 99, category: "Hygiene", stock: true, image: "https://images.unsplash.com/photo-1588776814546-ec7e0f4f2f64?w=400" },
+  { id: 24, name: "Lifebuoy Handwash + Refill", price: 99, category: "Hygiene", stock: true, image: "https://images.unsplash.com/photo-1588776814546-ec7e0f4f2f64?w=400" },
+  { id: 25, name: "Nycil Powder", price: 160, category: "Hygiene", stock: true, image: "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=400" },
+
+  // 🍶 Grocery & Cooking
+  { id: 26, name: "Tops White Vinegar", price: 67, category: "Grocery", stock: true, image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?w=400" },
+  { id: 27, name: "Tops Green Chilli Sauce", price: 67, category: "Grocery", stock: true, image: "https://images.unsplash.com/photo-1604908554165-1f1a6d9d7e1c?w=400" },
+  { id: 28, name: "Maggi Noodles Pack", price: 87, category: "Grocery", stock: true, image: "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400" },
+  { id: 29, name: "Gits Gulab Jamun Mix", price: 125, category: "Grocery", stock: true, image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400" },
+
+  // 🦟 Household
+  { id: 30, name: "Good Knight Flash Machine", price: 105, category: "Household", stock: true, image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400" },
+  { id: 31, name: "Good Knight Refill", price: 85, category: "Household", stock: true, image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400" }
+
 ];
 
 // ============================================================
