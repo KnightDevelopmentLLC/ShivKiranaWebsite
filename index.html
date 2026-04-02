@@ -18,6 +18,7 @@
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Phone">
 <input id="address" placeholder="Address">
+
 <button onclick="order()">Order on WhatsApp</button>
 
 <script type="module">
@@ -27,14 +28,16 @@ import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.
 let allProducts = [];
 let cart = [];
 
+// FETCH
 onSnapshot(collection(db,"products"), snap=>{
   allProducts = snap.docs.map(d=>({id:d.id,...d.data()}));
   renderProducts();
   renderCategories();
 });
 
+// CATEGORY
 function renderCategories(){
-  let cats = ["All", ...new Set(allProducts.map(p=>p.category))];
+  const cats = ["All", ...new Set(allProducts.map(p=>p.category))];
   document.getElementById("categories").innerHTML = cats.map(c=>
     `<button onclick="filter('${c}')">${c}</button>`
   ).join("");
@@ -45,6 +48,7 @@ window.filter = (cat)=>{
   else renderProducts(allProducts.filter(p=>p.category===cat));
 };
 
+// PRODUCTS
 function renderProducts(list=allProducts){
   document.getElementById("products").innerHTML = list.map(p=>`
     <div class="card">
@@ -56,6 +60,7 @@ function renderProducts(list=allProducts){
   `).join("");
 }
 
+// CART
 window.add = (p)=>{
   let item = cart.find(i=>i.id===p.id);
   if(item) item.qty++;
@@ -72,10 +77,17 @@ function renderCart(){
   document.getElementById("total").innerText = "Total: ₹"+total;
 }
 
+// ORDER
 window.order = ()=>{
   let msg = "Order:\n";
   cart.forEach(c=> msg+=`${c.name} x ${c.qty}\n`);
-  msg += document.getElementById("name").value;
+  
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const address = document.getElementById("address").value;
+
+  msg += `\nName: ${name}\nPhone: ${phone}\nAddress: ${address}`;
+
   window.open("https://wa.me/91XXXXXXXXXX?text="+encodeURIComponent(msg));
 };
 </script>
