@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shiv Kirana – Fresh Grocery Store</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header" id="header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-icon">🌿</span>
+      <div class="brand-text">
+        <!-- EDIT HERE - STORE DETAILS -->
+        <span class="brand-name">Shiv Kirana</span>
+        <span class="brand-tagline">Fresh · Local · Trusted</span>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <i class="fa fa-search search-icon"></i>
+      <input type="text" id="searchInput" placeholder="Search products…" autocomplete="off"/>
+      <button class="search-clear" id="searchClear" title="Clear"><i class="fa fa-times"></i></button>
+    </div>
+
+    <button class="cart-btn" id="cartToggle" aria-label="Open Cart">
+      <i class="fa fa-shopping-basket"></i>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">Welcome to your neighbourhood store</p>
+    <h1>Fresh Groceries,<br><em>Delivered with Love</em></h1>
+    <p class="hero-sub">Quality products at honest prices — right from our shelf to your home.</p>
+    <a href="#products" class="hero-cta">Shop Now <i class="fa fa-arrow-down"></i></a>
+  </div>
+  <div class="hero-art">
+    <div class="blob"></div>
+    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop" alt="Fresh Groceries" class="hero-img"/>
+  </div>
+</section>
+
+<!-- ===== PRODUCTS SECTION ===== -->
+<section class="products-section" id="products">
+  <div class="section-header">
+    <h2>Our Products</h2>
+    <p>Carefully sourced, freshness guaranteed</p>
+  </div>
+
+  <!-- Category Filter -->
+  <div class="category-bar" id="categoryBar">
+    <button class="cat-btn active" data-cat="All">All</button>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="product-grid" id="productGrid"></div>
+  <div class="no-results" id="noResults" style="display:none">
+    <i class="fa fa-search"></i>
+    <p>No products found. Try a different keyword.</p>
+  </div>
+</section>
+
+<!-- ===== CART SIDE PANEL ===== -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-panel" id="cartPanel">
+  <div class="cart-head">
+    <h3><i class="fa fa-shopping-basket"></i> Your Cart</h3>
+    <button class="close-cart" id="closeCart"><i class="fa fa-times"></i></button>
+  </div>
+
+  <div class="cart-items" id="cartItems">
+    <div class="empty-cart" id="emptyCart">
+      <i class="fa fa-shopping-basket"></i>
+      <p>Your cart is empty</p>
+    </div>
+  </div>
+
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total-row">
+      <span>Total</span>
+      <span id="cartTotal">₹0</span>
+    </div>
+
+    <!-- Checkout Form -->
+    <div class="checkout-form" id="checkoutForm">
+      <h4>Delivery Details</h4>
+      <input type="text" id="custName" placeholder="Your Name *" />
+      <input type="tel" id="custPhone" placeholder="Phone Number *" />
+      <textarea id="custAddress" placeholder="Delivery Address *" rows="2"></textarea>
+      <!-- EDIT HERE - WHATSAPP NUMBER -->
+      <button class="whatsapp-btn" id="whatsappOrder" onclick="orderWhatsApp()">
+        <i class="fab fa-whatsapp"></i> Order on WhatsApp
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== CHATBOT ===== -->
+<div class="chatbot-wrap" id="chatbotWrap">
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-head">
+      <span>🤖 Shiv Assistant</span>
+      <button onclick="toggleChat()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="chat-body" id="chatBody">
+      <div class="chat-msg bot">👋 Hi! How can I help you today?</div>
+    </div>
+    <div class="chat-options" id="chatOptions">
+      <button onclick="chatAction('products')">🛒 View Products</button>
+      <button onclick="chatAction('help')">❓ Order Help</button>
+      <button onclick="chatAction('delivery')">🚚 Delivery Info</button>
+      <button onclick="chatAction('contact')">📞 Contact</button>
+    </div>
+  </div>
+  <button class="chat-fab" onclick="toggleChat()" aria-label="Open Chat">
+    <i class="fa fa-comments"></i>
+  </button>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="brand-name">🌿 Shiv Kirana</span>
+      <!-- EDIT HERE - STORE DETAILS -->
+      <p>Your trusted neighbourhood grocery store since 2005.</p>
+    </div>
+    <div class="footer-info">
+      <h4>Store Info</h4>
+      <!-- EDIT HERE - STORE DETAILS -->
+      <p><i class="fa fa-map-marker-alt"></i> Station Road, Patna, Bihar – 800001</p>
+      <p><i class="fa fa-phone"></i> +91 98765 43210</p>
+      <p><i class="fa fa-clock"></i> Mon–Sun: 7:00 AM – 9:00 PM</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="#products">Products</a>
+      <a href="#products">Categories</a>
+      <a onclick="toggleChat()">Chat with Us</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Shiv Kirana. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// EDIT HERE - PRODUCTS
+// ============================================================
+const products = [
+  { id: 1,  name: "Basmati Rice (5kg)",       price: 349,  category: "Grains",      stock: true,  image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&auto=format&fit=crop" },
+  { id: 2,  name: "Whole Wheat Flour (10kg)", price: 299,  category: "Grains",      stock: true,  image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&auto=format&fit=crop" },
+  { id: 3,  name: "Toor Dal (1kg)",           price: 129,  category: "Pulses",      stock: true,  image: "https://images.unsplash.com/photo-1612257999756-1e2e978bb0c1?w=400&auto=format&fit=crop" },
+  { id: 4,  name: "Chana Dal (1kg)",          price: 109,  category: "Pulses",      stock: true,  image: "https://images.unsplash.com/photo-1515543904379-3d757afe72e4?w=400&auto=format&fit=crop" },
+  { id: 5,  name: "Mustard Oil (1L)",         price: 175,  category: "Oil & Ghee",  stock: true,  image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&auto=format&fit=crop" },
+  { id: 6,  name: "Pure Desi Ghee (500g)",    price: 389,  category: "Oil & Ghee",  stock: true,  image: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&auto=format&fit=crop" },
+  { id: 7,  name: "Fresh Tomatoes (1kg)",     price: 35,   category: "Vegetables",  stock: true,  image: "https://images.unsplash.com/photo-1607305387299-a3d9611cd469?w=400&auto=format&fit=crop" },
+  { id: 8,  name: "Onion (2kg)",              price: 55,   category: "Vegetables",  stock: true,  image: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400&auto=format&fit=crop" },
+  { id: 9,  name: "Potato (3kg)",             price: 75,   category: "Vegetables",  stock: true,  image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&auto=format&fit=crop" },
+  { id: 10, name: "Green Chillies (250g)",    price: 20,   category: "Vegetables",  stock: false, image: "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=400&auto=format&fit=crop" },
+  { id: 11, name: "Alphonso Mangoes (6pcs)",  price: 199,  category: "Fruits",      stock: true,  image: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=400&auto=format&fit=crop" },
+  { id: 12, name: "Bananas (1 dozen)",        price: 45,   category: "Fruits",      stock: true,  image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&auto=format&fit=crop" },
+  { id: 13, name: "Apple (1kg)",              price: 160,  category: "Fruits",      stock: true,  image: "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=400&auto=format&fit=crop" },
+  { id: 14, name: "Amul Full Cream Milk (1L)",price: 68,   category: "Dairy",       stock: true,  image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&auto=format&fit=crop" },
+  { id: 15, name: "Paneer (200g)",            price: 89,   category: "Dairy",       stock: true,  image: "https://images.unsplash.com/photo-1631452180775-cb1d57ac1e3b?w=400&auto=format&fit=crop" },
+  { id: 16, name: "Curd (500g)",              price: 45,   category: "Dairy",       stock: true,  image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&auto=format&fit=crop" },
+  { id: 17, name: "Turmeric Powder (200g)",   price: 55,   category: "Spices",      stock: true,  image: "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=400&auto=format&fit=crop" },
+  { id: 18, name: "Cumin Seeds (100g)",       price: 45,   category: "Spices",      stock: true,  image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&auto=format&fit=crop" },
+  { id: 19, name: "Red Chilli Powder (200g)", price: 60,   category: "Spices",      stock: false, image: "https://images.unsplash.com/photo-1583117361-0d2c2de3c413?w=400&auto=format&fit=crop" },
+  { id: 20, name: "Parle-G Biscuits (800g)",  price: 75,   category: "Snacks",      stock: true,  image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&auto=format&fit=crop" },
+  { id: 21, name: "Haldiram Namkeen (400g)",  price: 99,   category: "Snacks",      stock: true,  image: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&auto=format&fit=crop" },
+  { id: 22, name: "Maggi Noodles (12pk)",     price: 132,  category: "Snacks",      stock: true,  image: "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&auto=format&fit=crop" },
+  { id: 23, name: "Surf Excel (1kg)",         price: 185,  category: "Household",   stock: true,  image: "https://images.unsplash.com/photo-1585687433303-c4a81e2a20aa?w=400&auto=format&fit=crop" },
+  { id: 24, name: "Lifebuoy Soap (4 bars)",   price: 80,   category: "Household",   stock: true,  image: "https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400&auto=format&fit=crop" },
+];
+
+// ============================================================
+// EDIT HERE - WHATSAPP NUMBER
+// ============================================================
+const WHATSAPP_NUMBER = "919876543210"; // Format: country code + number (no + or spaces)
+
+// ============================================================
+// STATE
+// ============================================================
+let cart = JSON.parse(localStorage.getItem("shivKiranaCart")) || {};
+let activeCategory = "All";
+let searchQuery = "";
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  buildCategories();
+  renderProducts();
+  updateCartUI();
+
+  document.getElementById("searchInput").addEventListener("input", (e) => {
+    searchQuery = e.target.value.trim().toLowerCase();
+    document.getElementById("searchClear").style.display = searchQuery ? "flex" : "none";
+    renderProducts();
+  });
+
+  document.getElementById("searchClear").addEventListener("click", () => {
+    searchQuery = "";
+    document.getElementById("searchInput").value = "";
+    document.getElementById("searchClear").style.display = "none";
+    renderProducts();
+  });
+
+  document.getElementById("cartToggle").addEventListener("click", openCart);
+  document.getElementById("closeCart").addEventListener("click", closeCart);
+  document.getElementById("cartOverlay").addEventListener("click", closeCart);
+});
+
+// ============================================================
+// CATEGORIES
+// ============================================================
+function buildCategories() {
+  const cats = ["All", ...new Set(products.map(p => p.category))];
+  const bar = document.getElementById("categoryBar");
+  bar.innerHTML = "";
+  cats.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = "cat-btn" + (cat === "All" ? " active" : "");
+    btn.dataset.cat = cat;
+    btn.textContent = cat;
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeCategory = cat;
+      renderProducts();
+    });
+    bar.appendChild(btn);
+  });
+}
+
+// ============================================================
+// RENDER PRODUCTS
+// ============================================================
+function renderProducts() {
+  const grid = document.getElementById("productGrid");
+  const noRes = document.getElementById("noResults");
+
+  let filtered = products.filter(p => {
+    const matchCat = activeCategory === "All" || p.category === activeCategory;
+    const matchSearch = p.name.toLowerCase().includes(searchQuery);
+    return matchCat && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = "";
+    noRes.style.display = "flex";
+    return;
+  }
+  noRes.style.display = "none";
+
+  grid.innerHTML = filtered.map(p => {
+    const qty = cart[p.id]?.qty || 0;
+    return `
+    <div class="product-card ${!p.stock ? 'out-of-stock' : ''}">
+      <div class="card-img-wrap">
+        <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&fit=crop'"/>
+        ${!p.stock ? '<span class="oos-badge">Out of Stock</span>' : ''}
+        <span class="cat-pill">${p.category}</span>
+      </div>
+      <div class="card-body">
+        <h3 class="card-name">${p.name}</h3>
+        <p class="card-price">₹${p.price}</p>
+        <div class="card-actions">
+          ${p.stock ? (qty === 0
+            ? `<button class="add-btn" onclick="addToCart(${p.id})"><i class="fa fa-plus"></i> Add</button>`
+            : `<div class="qty-ctrl">
+                <button onclick="decreaseQty(${p.id})"><i class="fa fa-minus"></i></button>
+                <span>${qty}</span>
+                <button onclick="increaseQty(${p.id})"><i class="fa fa-plus"></i></button>
+               </div>`
+          ) : `<button class="add-btn disabled" disabled>Unavailable</button>`}
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ============================================================
+// CART FUNCTIONS
+// ============================================================
+function saveCart() {
+  localStorage.setItem("shivKiranaCart", JSON.stringify(cart));
+}
+
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  if (!p || !p.stock) return;
+  cart[id] = { name: p.name, price: p.price, qty: 1 };
+  saveCart();
+  updateCartUI();
+  renderProducts();
+  openCart();
+}
+
+function increaseQty(id) {
+  if (cart[id]) { cart[id].qty++; saveCart(); updateCartUI(); renderProducts(); }
+}
+
+function decreaseQty(id) {
+  if (!cart[id]) return;
+  cart[id].qty--;
+  if (cart[id].qty <= 0) delete cart[id];
+  saveCart();
+  updateCartUI();
+  renderProducts();
+}
+
+function removeFromCart(id) {
+  delete cart[id];
+  saveCart();
+  updateCartUI();
+  renderProducts();
+}
+
+function updateCartUI() {
+  const items = Object.entries(cart);
+  const totalCount = items.reduce((s, [, v]) => s + v.qty, 0);
+  const totalPrice = items.reduce((s, [, v]) => s + v.price * v.qty, 0);
+
+  document.getElementById("cartBadge").textContent = totalCount;
+
+  const cartItemsEl = document.getElementById("cartItems");
+  const emptyCart = document.getElementById("emptyCart");
+  const cartFooter = document.getElementById("cartFooter");
+
+  if (items.length === 0) {
+    cartItemsEl.innerHTML = `<div class="empty-cart" id="emptyCart"><i class="fa fa-shopping-basket"></i><p>Your cart is empty</p></div>`;
+    cartFooter.style.display = "none";
+    return;
+  }
+
+  cartFooter.style.display = "block";
+  cartItemsEl.innerHTML = items.map(([id, item]) => `
+    <div class="cart-item">
+      <div class="ci-info">
+        <span class="ci-name">${item.name}</span>
+        <span class="ci-price">₹${item.price} × ${item.qty} = <strong>₹${item.price * item.qty}</strong></span>
+      </div>
+      <div class="ci-ctrl">
+        <button onclick="decreaseQty(${id})"><i class="fa fa-minus"></i></button>
+        <span>${item.qty}</span>
+        <button onclick="increaseQty(${id})"><i class="fa fa-plus"></i></button>
+        <button class="ci-remove" onclick="removeFromCart(${id})"><i class="fa fa-trash"></i></button>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("cartTotal").textContent = `₹${totalPrice}`;
+}
+
+function openCart() {
+  document.getElementById("cartPanel").classList.add("open");
+  document.getElementById("cartOverlay").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function closeCart() {
+  document.getElementById("cartPanel").classList.remove("open");
+  document.getElementById("cartOverlay").classList.remove("show");
+  document.body.style.overflow = "";
+}
+
+// ============================================================
+// WHATSAPP CHECKOUT
+// ============================================================
+function orderWhatsApp() {
+  const name = document.getElementById("custName").value.trim();
+  const phone = document.getElementById("custPhone").value.trim();
+  const address = document.getElementById("custAddress").value.trim();
+
+  if (!name || !phone || !address) {
+    alert("Please fill in all delivery details before ordering.");
+    return;
+  }
+
+  const items = Object.values(cart);
+  if (items.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+
+  const total = items.reduce((s, v) => s + v.price * v.qty, 0);
+  let msg = `🌿 *New Order – Shiv Kirana*\n\n`;
+  msg += `*Customer:* ${name}\n*Phone:* ${phone}\n*Address:* ${address}\n\n`;
+  msg += `*Order Details:*\n`;
+  items.forEach(item => {
+    msg += `• ${item.name} × ${item.qty} = ₹${item.price * item.qty}\n`;
+  });
+  msg += `\n*Total: ₹${total}*\n\nThank you! 🙏`;
+
+  const encoded = encodeURIComponent(msg);
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, "_blank");
+}
+
+// ============================================================
+// CHATBOT
+// ============================================================
+function toggleChat() {
+  const panel = document.getElementById("chatPanel");
+  panel.classList.toggle("open");
+}
+
+function chatAction(action) {
+  const body = document.getElementById("chatBody");
+
+  const responses = {
+    products: {
+      user: "🛒 View Products",
+      bot: "Sure! Scrolling you to our products section right now. 👇",
+      action: () => { toggleChat(); document.getElementById("products").scrollIntoView({ behavior: "smooth" }); }
+    },
+    help: {
+      user: "❓ Order Help",
+      bot: "Easy! 1️⃣ Browse products. 2️⃣ Add items to cart. 3️⃣ Open cart & fill your details. 4️⃣ Tap 'Order on WhatsApp' — we'll confirm your order shortly! 😊"
+    },
+    delivery: {
+      user: "🚚 Delivery Info",
+      // EDIT HERE - STORE DETAILS
+      bot: "We deliver within 5 km of our store. Delivery time: 30–60 mins. Free delivery on orders above ₹500. 🛵"
+    },
+    contact: {
+      user: "📞 Contact",
+      // EDIT HERE - STORE DETAILS
+      bot: "📍 Station Road, Patna, Bihar\n📞 +91 98765 43210\n⏰ Open: 7 AM – 9 PM, all days!"
+    }
+  };
+
+  const r = responses[action];
+  body.innerHTML += `<div class="chat-msg user">${r.user}</div>`;
+  setTimeout(() => {
+    body.innerHTML += `<div class="chat-msg bot">${r.bot}</div>`;
+    body.scrollTop = body.scrollHeight;
+    if (r.action) setTimeout(r.action, 600);
+  }, 400);
+  body.scrollTop = body.scrollHeight;
+}
+</script>
+</body>
+</html>
