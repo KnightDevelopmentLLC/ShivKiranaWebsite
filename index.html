@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shiv Kirana — Your Neighbourhood Store</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ===================== HEADER ===================== -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">🛕</span>
+      <div class="logo-text">
+        <!-- EDIT HERE - STORE DETAILS -->
+        <h1>Shiv Kirana</h1>
+        <p>आपकी अपनी दुकान · Since 2005</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search products…" autocomplete="off" />
+      </div>
+      <button class="cart-btn" id="cartToggle">
+        🛒 <span id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== HERO STRIP ===================== -->
+<div class="hero-strip">
+  <span>🚚 Free delivery on orders above ₹300</span>
+  <span>⚡ Fast service</span>
+  <span>✅ Fresh & genuine products</span>
+</div>
+
+<!-- ===================== MAIN ===================== -->
+<main class="main">
+
+  <!-- Category Filter -->
+  <section class="filter-section">
+    <div class="filter-scroll">
+      <button class="filter-btn active" data-cat="All">All</button>
+      <button class="filter-btn" data-cat="Biscuits">🍪 Biscuits</button>
+      <button class="filter-btn" data-cat="Snacks">🥨 Snacks</button>
+      <button class="filter-btn" data-cat="Atta">🌾 Atta</button>
+      <button class="filter-btn" data-cat="Hair Oil">💧 Hair Oil</button>
+      <button class="filter-btn" data-cat="Oil">🫙 Oil</button>
+      <button class="filter-btn" data-cat="Cleaning">🧹 Cleaning</button>
+      <button class="filter-btn" data-cat="Hygiene">🧼 Hygiene</button>
+      <button class="filter-btn" data-cat="Grocery">🛒 Grocery</button>
+      <button class="filter-btn" data-cat="Household">🏠 Household</button>
+    </div>
+  </section>
+
+  <!-- Product Grid -->
+  <section class="products-section">
+    <div class="section-header">
+      <h2 id="sectionTitle">All Products</h2>
+      <span id="productCount" class="product-count"></span>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+    <div class="no-results" id="noResults" style="display:none;">
+      <span>😕</span>
+      <p>No products found. Try a different search!</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== CART SIDEBAR ===================== -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>🛒 Your Cart</h3>
+    <button class="close-cart" id="closeCart">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="empty-cart">
+      <span>🛒</span>
+      <p>Your cart is empty</p>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-total">
+      <span>Total</span>
+      <strong id="cartTotal">₹0</strong>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn">
+      <span>📲</span> Order on WhatsApp
+    </button>
+  </div>
+</aside>
+
+<!-- ===================== CHATBOT ===================== -->
+<div class="chatbot-wrap" id="chatbotWrap">
+  <div class="chatbot-box" id="chatbotBox" style="display:none;">
+    <div class="chatbot-head">
+      <span>🛕 Shiv Kirana Assistant</span>
+      <button id="closeChatbot">✕</button>
+    </div>
+    <div class="chatbot-messages" id="chatbotMessages">
+      <div class="bot-msg">Namaste! 🙏 How can I help you today?</div>
+    </div>
+    <div class="chatbot-options" id="chatbotOptions">
+      <button class="chat-opt-btn" data-action="timings">🕐 Store Timings</button>
+      <button class="chat-opt-btn" data-action="delivery">🚚 Delivery Info</button>
+      <button class="chat-opt-btn" data-action="payment">💳 Payment Options</button>
+      <button class="chat-opt-btn" data-action="contact">📞 Contact Us</button>
+      <button class="chat-opt-btn" data-action="offers">🎉 Today's Offers</button>
+      <button class="chat-opt-btn" data-action="return">🔄 Return Policy</button>
+    </div>
+  </div>
+  <button class="chatbot-toggle" id="chatbotToggle">💬</button>
+</div>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <!-- EDIT HERE - STORE DETAILS -->
+  <div class="footer-inner">
+    <div>
+      <strong>🛕 Shiv Kirana</strong><br />
+      Patna, Bihar — 800001<br />
+      <!-- EDIT HERE - WHATSAPP NUMBER -->
+      📞 +91 98765 43210
+    </div>
+    <div class="footer-cats">
+      <span>Biscuits · Snacks · Atta</span><br />
+      <span>Hair Oil · Cleaning · Hygiene</span><br />
+      <span>Grocery · Household</span>
+    </div>
+    <div>
+      <small>© 2025 Shiv Kirana. All rights reserved.</small><br />
+      <small>Made with ❤️ in Bihar</small>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// EDIT HERE - STORE DETAILS & WHATSAPP NUMBER
+// ============================================================
+const STORE_NAME = "Shiv Kirana";
+const WHATSAPP_NUMBER = "919876543210"; // EDIT HERE - WHATSAPP NUMBER (country code + number, no +)
+
+// ============================================================
+// EDIT HERE - PRODUCTS
+// ============================================================
+const products = [
+  // --- BISCUITS ---
+  { name: "Parle Top Rich Butter Crackers Small", price: 9,   category: "Biscuits",  image: "https://www.bigbasket.com/media/uploads/p/xxl/40013620_8-parle-top-rich-butter-crackers.jpg", quantity: 10 },
+  { name: "Parle Top Rich Butter Crackers Big",   price: 30,  category: "Biscuits",  image: "https://www.bigbasket.com/media/uploads/p/xxl/40013620_8-parle-top-rich-butter-crackers.jpg", quantity: 10 },
+  { name: "Parle-G",                              price: 10,  category: "Biscuits",  image: "https://www.bigbasket.com/media/uploads/p/xxl/266991_3-parle-g-glucose-biscuits.jpg", quantity: 10 },
+  { name: "Bourbon Biscuit",                      price: 10,  category: "Biscuits",  image: "https://www.bigbasket.com/media/uploads/p/xxl/30001032_5-britannia-bourbon-the-original-cream-biscuit.jpg", quantity: 10 },
+  { name: "Monaco Biscuit",                       price: 20,  category: "Biscuits",  image: "https://www.bigbasket.com/media/uploads/p/xxl/40064137_3-parle-monaco-classic-salted-biscuits.jpg", quantity: 10 },
+  { name: "Good Day Butter Cookies",              price: 40,  category: "Biscuits",  image: "https://www.bigbasket.com/media/uploads/p/xxl/20002273_8-britannia-good-day-butter-cookies.jpg", quantity: 10 },
+  { name: "Parle Rusk",                           price: 40,  category: "Biscuits",  image: "https://www.bigbasket.com/media/uploads/p/xxl/40004983_6-parle-rusk-toasty.jpg", quantity: 10 },
+
+  // --- SNACKS ---
+  { name: "Parle Nimkin",                         price: 9,   category: "Snacks",    image: "https://www.bigbasket.com/media/uploads/p/xxl/40008199_4-parle-nimkin-salty-biscuits.jpg", quantity: 10 },
+
+  // --- ATTA ---
+  { name: "Aashirwad Atta",                       price: 283, category: "Atta",      image: "https://www.bigbasket.com/media/uploads/p/xxl/10000099_27-aashirvaad-whole-wheat-shudh-atta.jpg", quantity: 10 },
+
+  // --- HAIR OIL ---
+  { name: "Dabur Amla Hair Oil Small",            price: 20,  category: "Hair Oil",  image: "https://www.bigbasket.com/media/uploads/p/xxl/227775_7-dabur-amla-hair-oil.jpg", quantity: 10 },
+  { name: "Dabur Amla Hair Oil Big",              price: 50,  category: "Hair Oil",  image: "https://www.bigbasket.com/media/uploads/p/xxl/227775_7-dabur-amla-hair-oil.jpg", quantity: 10 },
+  { name: "Parachute Coconut Oil Small",          price: 68,  category: "Hair Oil",  image: "https://www.bigbasket.com/media/uploads/p/xxl/40006667_11-marico-parachute-coconut-oil.jpg", quantity: 10 },
+  { name: "Parachute Coconut Oil Big",            price: 125, category: "Hair Oil",  image: "https://www.bigbasket.com/media/uploads/p/xxl/40006667_11-marico-parachute-coconut-oil.jpg", quantity: 10 },
+  { name: "Vatika Coconut Oil",                   price: 40,  category: "Hair Oil",  image: "https://www.bigbasket.com/media/uploads/p/xxl/226396_5-dabur-vatika-enriched-coconut-hair-oil.jpg", quantity: 10 },
+  { name: "Bajaj Almond Drops",                   price: 75,  category: "Hair Oil",  image: "https://www.bigbasket.com/media/uploads/p/xxl/226432_5-bajaj-almond-drops-hair-oil.jpg", quantity: 10 },
+  { name: "Dabur Almond Oil",                     price: 33,  category: "Hair Oil",  image: "https://www.bigbasket.com/media/uploads/p/xxl/226396_5-dabur-vatika-enriched-coconut-hair-oil.jpg", quantity: 10 },
+  { name: "Lal Tel Small",                        price: 40,  category: "Hair Oil",  image: "https://images.meesho.com/images/products/254006227/zzlcj_512.webp", quantity: 10 },
+  { name: "Lal Tel Big",                          price: 70,  category: "Hair Oil",  image: "https://images.meesho.com/images/products/254006227/zzlcj_512.webp", quantity: 10 },
+
+  // --- OIL ---
+  { name: "Mustard Oil Local",                    price: 55,  category: "Oil",       image: "https://www.bigbasket.com/media/uploads/p/xxl/40076428_5-patanjali-kachi-ghani-mustard-oil.jpg", quantity: 10 },
+
+  // --- CLEANING ---
+  { name: "Harpic Small",                         price: 46,  category: "Cleaning",  image: "https://www.bigbasket.com/media/uploads/p/xxl/266380_7-harpic-power-plus-toilet-cleaner-original.jpg", quantity: 10 },
+  { name: "Harpic Big",                           price: 110, category: "Cleaning",  image: "https://www.bigbasket.com/media/uploads/p/xxl/266380_7-harpic-power-plus-toilet-cleaner-original.jpg", quantity: 10 },
+
+  // --- HYGIENE ---
+  { name: "Savlon Handwash Refill",               price: 99,  category: "Hygiene",   image: "https://www.bigbasket.com/media/uploads/p/xxl/40030234_8-savlon-moisture-shield-hand-wash-refill-pack.jpg", quantity: 10 },
+  { name: "Lifebuoy Handwash",                    price: 99,  category: "Hygiene",   image: "https://www.bigbasket.com/media/uploads/p/xxl/40008866_9-lifebuoy-total-10-hand-wash.jpg", quantity: 10 },
+  { name: "Nycil Powder",                         price: 160, category: "Hygiene",   image: "https://www.bigbasket.com/media/uploads/p/xxl/40068702_4-nycil-cool-herbal-prickly-heat-powder.jpg", quantity: 10 },
+
+  // --- GROCERY ---
+  { name: "Tops Vinegar",                         price: 67,  category: "Grocery",   image: "https://www.bigbasket.com/media/uploads/p/xxl/40041413_5-tops-white-vinegar.jpg", quantity: 10 },
+  { name: "Tops Green Chilli Sauce",              price: 67,  category: "Grocery",   image: "https://www.bigbasket.com/media/uploads/p/xxl/40041414_5-tops-green-chilli-sauce.jpg", quantity: 10 },
+  { name: "Maggi Pack",                           price: 87,  category: "Grocery",   image: "https://www.bigbasket.com/media/uploads/p/xxl/40139765_14-maggi-2-minute-noodles-masala.jpg", quantity: 10 },
+  { name: "Gits Gulab Jamun Mix",                 price: 125, category: "Grocery",   image: "https://www.bigbasket.com/media/uploads/p/xxl/40011059_4-gits-gulab-jamun-mix.jpg", quantity: 10 },
+
+  // --- HOUSEHOLD ---
+  { name: "Good Knight Machine",                  price: 105, category: "Household", image: "https://www.bigbasket.com/media/uploads/p/xxl/40162327_5-good-knight-gold-flash-electric-mosquito-repellent-machine.jpg", quantity: 10 },
+  { name: "Good Knight Refill",                   price: 85,  category: "Household", image: "https://www.bigbasket.com/media/uploads/p/xxl/40162328_6-good-knight-gold-flash-mosquito-repellent-refill.jpg", quantity: 10 },
+];
+
+// ============================================================
+// CART STATE
+// ============================================================
+let cart = {};
+let currentFilter = "All";
+let currentSearch = "";
+
+// ============================================================
+// RENDER PRODUCTS
+// ============================================================
+function renderProducts() {
+  const grid = document.getElementById("productGrid");
+  const noRes = document.getElementById("noResults");
+  const title = document.getElementById("sectionTitle");
+  const count = document.getElementById("productCount");
+
+  const filtered = products.filter(p => {
+    const matchCat = currentFilter === "All" || p.category === currentFilter;
+    const matchSearch = p.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                        p.category.toLowerCase().includes(currentSearch.toLowerCase());
+    return matchCat && matchSearch;
+  });
+
+  title.textContent = currentFilter === "All" ? "All Products" : currentFilter;
+  count.textContent = `${filtered.length} item${filtered.length !== 1 ? "s" : ""}`;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = "";
+    noRes.style.display = "flex";
+    return;
+  }
+  noRes.style.display = "none";
+
+  grid.innerHTML = filtered.map((p, idx) => {
+    const key = products.indexOf(p);
+    const inCart = cart[key] ? cart[key].qty : 0;
+    return `
+      <div class="product-card" data-index="${key}">
+        <div class="product-img-wrap">
+          <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/200x200/f5f0e8/b45309?text=${encodeURIComponent(p.name.slice(0,8))}'"/>
+          <span class="cat-badge">${p.category}</span>
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">${p.name}</h3>
+          <div class="product-bottom">
+            <span class="product-price">₹${p.price}</span>
+            ${inCart === 0
+              ? `<button class="add-btn" onclick="addToCart(${key})">+ Add</button>`
+              : `<div class="qty-ctrl">
+                   <button onclick="decreaseCart(${key})">−</button>
+                   <span>${inCart}</span>
+                   <button onclick="increaseCart(${key})">+</button>
+                 </div>`
+            }
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// ============================================================
+// CART FUNCTIONS
+// ============================================================
+function addToCart(key) {
+  const p = products[key];
+  if (!cart[key]) cart[key] = { name: p.name, price: p.price, qty: 0 };
+  cart[key].qty++;
+  updateCartUI();
+  renderProducts();
+}
+
+function increaseCart(key) {
+  if (cart[key]) { cart[key].qty++; updateCartUI(); renderProducts(); }
+}
+
+function decreaseCart(key) {
+  if (cart[key]) {
+    cart[key].qty--;
+    if (cart[key].qty <= 0) delete cart[key];
+    updateCartUI();
+    renderProducts();
+  }
+}
+
+function removeFromCart(key) {
+  delete cart[key];
+  updateCartUI();
+  renderProducts();
+}
+
+function updateCartUI() {
+  const keys = Object.keys(cart);
+  const totalQty = keys.reduce((s, k) => s + cart[k].qty, 0);
+  const totalPrice = keys.reduce((s, k) => s + cart[k].qty * cart[k].price, 0);
+
+  document.getElementById("cartCount").textContent = totalQty;
+
+  const cartItems = document.getElementById("cartItems");
+  const cartFooter = document.getElementById("cartFooter");
+
+  if (keys.length === 0) {
+    cartItems.innerHTML = `<div class="empty-cart"><span>🛒</span><p>Your cart is empty</p></div>`;
+    cartFooter.style.display = "none";
+    return;
+  }
+
+  cartFooter.style.display = "block";
+  document.getElementById("cartTotal").textContent = `₹${totalPrice}`;
+
+  cartItems.innerHTML = keys.map(k => `
+    <div class="cart-item">
+      <div class="cart-item-info">
+        <span class="cart-item-name">${cart[k].name}</span>
+        <span class="cart-item-price">₹${cart[k].price} × ${cart[k].qty} = <strong>₹${cart[k].price * cart[k].qty}</strong></span>
+      </div>
+      <div class="cart-item-ctrl">
+        <button onclick="decreaseCart(${k})">−</button>
+        <span>${cart[k].qty}</span>
+        <button onclick="increaseCart(${k})">+</button>
+        <button class="remove-btn" onclick="removeFromCart(${k})">🗑</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+// ============================================================
+// WHATSAPP CHECKOUT
+// ============================================================
+document.getElementById("checkoutBtn").addEventListener("click", () => {
+  const keys = Object.keys(cart);
+  if (keys.length === 0) return;
+
+  const totalPrice = keys.reduce((s, k) => s + cart[k].qty * cart[k].price, 0);
+  let msg = `🛕 *Order from ${STORE_NAME}*\n\n`;
+  keys.forEach(k => {
+    msg += `• ${cart[k].name} × ${cart[k].qty} = ₹${cart[k].price * cart[k].qty}\n`;
+  });
+  msg += `\n*Total: ₹${totalPrice}*\n\nPlease confirm my order. 🙏`;
+
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(url, "_blank");
+});
+
+// ============================================================
+// CART SIDEBAR TOGGLE
+// ============================================================
+document.getElementById("cartToggle").addEventListener("click", () => {
+  document.getElementById("cartSidebar").classList.add("open");
+  document.getElementById("cartOverlay").classList.add("active");
+});
+document.getElementById("closeCart").addEventListener("click", closeCart);
+document.getElementById("cartOverlay").addEventListener("click", closeCart);
+function closeCart() {
+  document.getElementById("cartSidebar").classList.remove("open");
+  document.getElementById("cartOverlay").classList.remove("active");
+}
+
+// ============================================================
+// FILTERS
+// ============================================================
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.dataset.cat;
+    renderProducts();
+  });
+});
+
+// ============================================================
+// SEARCH
+// ============================================================
+document.getElementById("searchInput").addEventListener("input", e => {
+  currentSearch = e.target.value;
+  renderProducts();
+});
+
+// ============================================================
+// CHATBOT
+// ============================================================
+const chatResponses = {
+  timings:  "🕐 We are open from *8:00 AM to 10:00 PM*, Monday to Sunday — every day!",
+  delivery: "🚚 We offer home delivery within 2 km radius. Orders above ₹300 get *free delivery*! Below ₹300, a small ₹20 charge applies.",
+  payment:  "💳 We accept *Cash, UPI (PhonePe / GPay / Paytm)*, and WhatsApp Pay. No card machines yet!",
+  contact:  "📞 Call or WhatsApp us at *+91 98765 43210*. We're always happy to help! 🙏", // EDIT HERE - WHATSAPP NUMBER
+  offers:   "🎉 Today's special: Get *5% off* on all Biscuits above ₹50! Use code SHIV5 while ordering on WhatsApp.",
+  return:   "🔄 We accept returns within *24 hours* of purchase for sealed/unopened products. Bring the item and bill to the store.",
+};
+
+document.getElementById("chatbotToggle").addEventListener("click", () => {
+  const box = document.getElementById("chatbotBox");
+  box.style.display = box.style.display === "none" ? "flex" : "none";
+});
+document.getElementById("closeChatbot").addEventListener("click", () => {
+  document.getElementById("chatbotBox").style.display = "none";
+});
+
+document.querySelectorAll(".chat-opt-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const action = btn.dataset.action;
+    const msgs = document.getElementById("chatbotMessages");
+
+    // User message
+    const userDiv = document.createElement("div");
+    userDiv.className = "user-msg";
+    userDiv.textContent = btn.textContent;
+    msgs.appendChild(userDiv);
+
+    // Bot reply
+    setTimeout(() => {
+      const botDiv = document.createElement("div");
+      botDiv.className = "bot-msg";
+      botDiv.innerHTML = chatResponses[action].replace(/\*(.*?)\*/g, "<strong>$1</strong>");
+      msgs.appendChild(botDiv);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 400);
+
+    msgs.scrollTop = msgs.scrollHeight;
+  });
+});
+
+// ============================================================
+// INIT
+// ============================================================
+renderProducts();
+</script>
+</body>
+</html>
